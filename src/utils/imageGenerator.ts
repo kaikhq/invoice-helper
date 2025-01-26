@@ -4,6 +4,35 @@ import {calculateInvoiceAmounts} from './invoiceUtils';
 import {formatTaiwanDate, getInvoicePeriod} from './dateUtils';
 import {formatChineseAmount} from './numberUtils';
 
+async function loadGoogleFont(font: string, text: string) {
+  const url = `https://fonts.googleapis.com/css2?family=${font}&text=${encodeURIComponent(
+    text
+  )}`;
+
+  const css = await (
+    await fetch(url, {
+      headers: {
+        // 模擬瀏覽器請求以避免 Google Fonts 阻擋
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+      },
+    })
+  ).text();
+
+  const resource = css.match(
+    /src: url\((.+)\) format\('(opentype|truetype)'\)/
+  );
+
+  if (resource) {
+    const response = await fetch(resource[1]);
+    if (response.status === 200) {
+      return await response.arrayBuffer();
+    }
+  }
+
+  throw new Error('failed to load font data');
+}
+
 export async function createInvoiceImage(data: InvoiceData): Promise<string> {
   const {amount, tax, subtotal} = calculateInvoiceAmounts(
     data.totalAmount,
@@ -16,10 +45,25 @@ export async function createInvoiceImage(data: InvoiceData): Promise<string> {
   const invoicePeriod = getInvoicePeriod(data.date);
   const chineseAmount = formatChineseAmount(amount);
 
-  // 直接載入 Noto Sans TC Regular 字體檔案
-  const fontData = await fetch(
-    'https://fonts.cdnfonts.com/s/107410/NotoSansTC[wght].woff'
-  ).then((res) => res.arrayBuffer());
+  // 準備所有需要的文字內容
+  const textContent = [
+    '統一發票（三聯式）',
+    invoicePeriod,
+    '買受人：',
+    data.buyer,
+    '統一編號：',
+    data.uniformNumber,
+    '銷售額：',
+    subtotal.toLocaleString(),
+    '營業稅：',
+    tax.toLocaleString(),
+    '總計：',
+    amount.toLocaleString(),
+    '元整',
+  ].join('');
+
+  // 載入字體
+  const fontData = await loadGoogleFont('Noto+Sans+TC', textContent);
 
   const svg = await satori(
     {
