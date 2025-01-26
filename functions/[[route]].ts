@@ -36,7 +36,6 @@ export const onRequestGet: vercelOGPagesPluginFunction = async ({
 }) => {
   const url = new URL(request.url);
 
-  // 只處理 /api/generate-image 路徑
   if (!url.pathname.startsWith('/api/generate-image')) {
     return next();
   }
@@ -187,8 +186,8 @@ export const onRequestGet: vercelOGPagesPluginFunction = async ({
                 style: {
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '16px',
                   marginTop: '32px',
+                  border: '1px solid #d1d5db',
                 },
                 children: [
                   {
@@ -196,24 +195,119 @@ export const onRequestGet: vercelOGPagesPluginFunction = async ({
                     props: {
                       style: {
                         display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
+                        borderBottom: '1px solid #d1d5db',
+                        backgroundColor: '#f9fafb',
                       },
                       children: [
                         {
-                          type: 'span',
+                          type: 'div',
                           props: {
                             style: {
+                              flex: '1',
+                              padding: '12px',
+                              textAlign: 'center',
                               fontWeight: 500,
-                              width: '80px',
+                              borderRight: '1px solid #d1d5db',
                             },
-                            children: '銷售額：',
+                            children: '品名',
                           },
                         },
                         {
-                          type: 'span',
+                          type: 'div',
                           props: {
                             style: {
+                              width: '100px',
+                              padding: '12px',
+                              textAlign: 'center',
+                              fontWeight: 500,
+                              borderRight: '1px solid #d1d5db',
+                            },
+                            children: '數量',
+                          },
+                        },
+                        {
+                          type: 'div',
+                          props: {
+                            style: {
+                              width: '120px',
+                              padding: '12px',
+                              textAlign: 'center',
+                              fontWeight: 500,
+                              borderRight: '1px solid #d1d5db',
+                            },
+                            children: '單價',
+                          },
+                        },
+                        {
+                          type: 'div',
+                          props: {
+                            style: {
+                              width: '120px',
+                              padding: '12px',
+                              textAlign: 'center',
+                              fontWeight: 500,
+                            },
+                            children: '金額',
+                          },
+                        },
+                      ],
+                    },
+                  },
+                  {
+                    type: 'div',
+                    props: {
+                      style: {
+                        display: 'flex',
+                        borderBottom: '1px solid #d1d5db',
+                      },
+                      children: [
+                        {
+                          type: 'div',
+                          props: {
+                            style: {
+                              flex: '1',
+                              padding: '12px',
+                              color: '#2563eb',
+                              borderRight: '1px solid #d1d5db',
+                            },
+                            children: '請填寫品名',
+                          },
+                        },
+                        {
+                          type: 'div',
+                          props: {
+                            style: {
+                              width: '100px',
+                              padding: '12px',
+                              textAlign: 'right',
+                              color: '#2563eb',
+                              fontFamily: 'monospace',
+                              borderRight: '1px solid #d1d5db',
+                            },
+                            children: '1',
+                          },
+                        },
+                        {
+                          type: 'div',
+                          props: {
+                            style: {
+                              width: '120px',
+                              padding: '12px',
+                              textAlign: 'right',
+                              color: '#2563eb',
+                              fontFamily: 'monospace',
+                              borderRight: '1px solid #d1d5db',
+                            },
+                            children: subtotal.toLocaleString(),
+                          },
+                        },
+                        {
+                          type: 'div',
+                          props: {
+                            style: {
+                              width: '120px',
+                              padding: '12px',
+                              textAlign: 'right',
                               color: '#2563eb',
                               fontFamily: 'monospace',
                             },
@@ -228,24 +322,83 @@ export const onRequestGet: vercelOGPagesPluginFunction = async ({
                     props: {
                       style: {
                         display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
+                        borderBottom: '1px solid #d1d5db',
                       },
                       children: [
                         {
-                          type: 'span',
+                          type: 'div',
                           props: {
                             style: {
+                              flex: '1',
+                              padding: '12px',
+                              textAlign: 'center',
                               fontWeight: 500,
-                              width: '80px',
+                              borderRight: '1px solid #d1d5db',
                             },
-                            children: '營業稅：',
+                            children: '銷售額合計',
                           },
                         },
                         {
-                          type: 'span',
+                          type: 'div',
                           props: {
                             style: {
+                              width: '120px',
+                              padding: '12px',
+                              textAlign: 'right',
+                              color: '#2563eb',
+                              fontFamily: 'monospace',
+                            },
+                            children: subtotal.toLocaleString(),
+                          },
+                        },
+                      ],
+                    },
+                  },
+                  {
+                    type: 'div',
+                    props: {
+                      style: {
+                        display: 'flex',
+                        borderBottom: '1px solid #d1d5db',
+                      },
+                      children: [
+                        {
+                          type: 'div',
+                          props: {
+                            style: {
+                              width: '80px',
+                              padding: '12px',
+                              textAlign: 'center',
+                              fontWeight: 500,
+                              borderRight: '1px solid #d1d5db',
+                            },
+                            children: '營業稅',
+                          },
+                        },
+                        {
+                          type: 'div',
+                          props: {
+                            style: {
+                              flex: '1',
+                              padding: '12px',
+                              textAlign: 'center',
+                              borderRight: '1px solid #d1d5db',
+                            },
+                            children:
+                              data.taxType === 'regular'
+                                ? '應稅 ✓'
+                                : data.taxType === 'zero-rate'
+                                ? '零稅率 ✓'
+                                : '免稅 ✓',
+                          },
+                        },
+                        {
+                          type: 'div',
+                          props: {
+                            style: {
+                              width: '120px',
+                              padding: '12px',
+                              textAlign: 'right',
                               color: '#2563eb',
                               fontFamily: 'monospace',
                             },
@@ -260,25 +413,28 @@ export const onRequestGet: vercelOGPagesPluginFunction = async ({
                     props: {
                       style: {
                         display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        marginTop: '8px',
                       },
                       children: [
                         {
-                          type: 'span',
+                          type: 'div',
                           props: {
                             style: {
-                              fontWeight: 'bold',
-                              width: '80px',
+                              flex: '1',
+                              padding: '12px',
+                              textAlign: 'center',
+                              fontWeight: 500,
+                              borderRight: '1px solid #d1d5db',
                             },
-                            children: '總計：',
+                            children: '總計',
                           },
                         },
                         {
-                          type: 'span',
+                          type: 'div',
                           props: {
                             style: {
+                              width: '120px',
+                              padding: '12px',
+                              textAlign: 'right',
                               color: '#2563eb',
                               fontWeight: 'bold',
                               fontFamily: 'monospace',
