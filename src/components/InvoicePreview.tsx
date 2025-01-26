@@ -1,10 +1,14 @@
-import { formatTaiwanDate, getInvoicePeriod } from '../utils/dateUtils';
-import { formatChineseAmount } from '../utils/numberUtils';
-import { InvoiceData, InvoiceCalculation } from '../types/invoice';
-import { CalculationSummary, InvoiceHeader, InvoiceTable } from './invoice-preview';
-import { InvoiceTips } from './invoice-preview/InvoiceTips';
-import { Download } from 'lucide-react';
-import { useCallback, useRef } from 'react';
+import {formatTaiwanDate, getInvoicePeriod} from '../utils/dateUtils';
+import {formatChineseAmount} from '../utils/numberUtils';
+import {InvoiceData, InvoiceCalculation} from '../types/invoice';
+import {
+  CalculationSummary,
+  InvoiceHeader,
+  InvoiceTable,
+} from './invoice-preview';
+import {InvoiceTips} from './invoice-preview/InvoiceTips';
+import {Download} from 'lucide-react';
+import {useCallback, useRef, useEffect} from 'react';
 import html2canvas from 'html2canvas';
 
 interface InvoicePreviewProps extends InvoiceData, InvoiceCalculation {}
@@ -16,12 +20,19 @@ export function InvoicePreview({
   taxType,
   subtotal,
   tax,
-  amount
+  amount,
 }: InvoicePreviewProps) {
   const chineseAmount = formatChineseAmount(amount);
   const formattedDate = formatTaiwanDate(date);
   const invoicePeriod = getInvoicePeriod(date);
   const invoiceRef = useRef<HTMLDivElement>(null);
+
+  // 添加一個標記，表示內容已經渲染完成
+  useEffect(() => {
+    if (invoiceRef.current) {
+      invoiceRef.current.setAttribute('data-rendered', 'true');
+    }
+  }, [buyer, uniformNumber, date, taxType, subtotal, tax, amount]);
 
   const handleDownload = useCallback(async () => {
     if (!invoiceRef.current) return;
@@ -31,6 +42,16 @@ export function InvoicePreview({
         scale: 2, // 提高解析度
         backgroundColor: '#ffffff',
         logging: false,
+        useCORS: true, // 允許跨域圖片
+        onclone: (clonedDoc) => {
+          // 確保克隆的文檔中的樣式都已經應用
+          const clonedElement = clonedDoc.querySelector(
+            '[data-rendered="true"]'
+          );
+          if (clonedElement) {
+            clonedElement.classList.add('screenshot-ready');
+          }
+        },
       });
 
       const link = document.createElement('a');
@@ -43,30 +64,34 @@ export function InvoicePreview({
   }, [uniformNumber, date]);
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Download Button */}
-      <div className="flex justify-end">
+      <div className='flex justify-end'>
         <button
           onClick={handleDownload}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+          className='inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors'
         >
-          <Download className="w-4 h-4" />
+          <Download className='w-4 h-4' />
           下載發票預覽
         </button>
       </div>
 
       {/* Calculation Summary */}
       <CalculationSummary tax={tax} subtotal={subtotal} amount={amount} />
-      
+
       {/* Invoice Preview */}
-      <div ref={invoiceRef} id="invoice-preview" className="border border-gray-300 rounded-lg bg-white">
+      <div
+        ref={invoiceRef}
+        className='border border-gray-300 rounded-lg bg-white print:shadow-none'
+        style={{contain: 'paint'}} // 優化渲染性能
+      >
         <InvoiceHeader
           invoicePeriod={invoicePeriod}
           buyer={buyer}
           uniformNumber={uniformNumber}
           formattedDate={formattedDate}
         />
-        
+
         <InvoiceTable
           subtotal={subtotal}
           tax={tax}
