@@ -1,11 +1,13 @@
-import {createInvoiceImage} from '../src/utils/imageGenerator';
+import React from 'react';
+import vercelOGPagesPlugin from '@cloudflare/pages-plugin-vercel-og';
 import {InvoiceData} from '../src/types/invoice';
+import {calculateInvoiceAmounts} from '../src/utils/invoiceUtils';
+import {formatTaiwanDate, getInvoicePeriod} from '../src/utils/dateUtils';
+import {formatChineseAmount} from '../src/utils/numberUtils';
 
-export interface Env {
-  // 如果需要使用 Cloudflare KV 或其他綁定，在這裡定義
-}
+interface Props extends InvoiceData {}
 
-function parseInvoiceData(searchParams: URLSearchParams): InvoiceData | null {
+function parseInvoiceData(searchParams: URLSearchParams): Props | null {
   try {
     return {
       buyer: searchParams.get('buyer') || '',
@@ -24,57 +26,103 @@ function parseInvoiceData(searchParams: URLSearchParams): InvoiceData | null {
   }
 }
 
-export async function onRequest(context: any) {
-  const {request} = context;
-  const url = new URL(request.url);
+export const onRequest = vercelOGPagesPlugin<Props>({
+  component: ({
+    buyer,
+    uniformNumber,
+    date,
+    totalAmount,
+    subtotalAmount,
+    amountType,
+    taxType,
+  }) => {
+    const {amount, tax, subtotal} = calculateInvoiceAmounts(
+      totalAmount,
+      subtotalAmount,
+      amountType,
+      taxType
+    );
 
-  // 處理圖片生成 API
-  if (request.method === 'GET' && url.pathname === '/api/generate-image') {
-    try {
-      const data = parseInvoiceData(url.searchParams);
-      if (!data) {
-        return new Response(JSON.stringify({error: 'Invalid invoice data'}), {
-          status: 400,
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-          },
-        });
-      }
+    const formattedDate = formatTaiwanDate(date);
+    const invoicePeriod = getInvoicePeriod(date);
+    const chineseAmount = formatChineseAmount(amount);
 
-      const svg = await createInvoiceImage(data);
+    return (
+      <div
+        style={{
+          height: '100%',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          backgroundColor: 'white',
+          padding: '40px',
+          fontFamily: 'Noto Sans TC',
+        }}
+      >
+        <div style={{textAlign: 'center', marginBottom: '32px'}}>
+          <h1
+            style={{fontSize: '24px', fontWeight: 'bold', marginBottom: '8px'}}
+          >
+            統一發票（三聯式）
+          </h1>
+          <p style={{fontSize: '16px', color: '#666'}}>{invoicePeriod}</p>
+        </div>
 
-      // 直接返回 SVG
-      return new Response(svg, {
-        headers: {
-          'Content-Type': 'image/svg+xml',
-          'Cache-Control': 'public, max-age=3600',
-          'Access-Control-Allow-Origin': '*',
-        },
-      });
-    } catch (error) {
-      console.error('Error generating image:', error);
-      return new Response(JSON.stringify({error: 'Failed to generate image'}), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-      });
+        <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+          <div style={{display: 'flex', gap: '8px'}}>
+            <span style={{fontWeight: 500, width: '80px'}}>買受人：</span>
+            <span style={{color: '#2563eb'}}>{buyer || '　'}</span>
+          </div>
+          <div style={{display: 'flex', gap: '8px'}}>
+            <span style={{fontWeight: 500, width: '80px'}}>統一編號：</span>
+            <span style={{color: '#2563eb', fontFamily: 'monospace'}}>
+              {uniformNumber || '　'}
+            </span>
+          </div>
+        </div>
+
+        <div
+          style={{
+            marginTop: '32px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px',
+          }}
+        >
+          <div style={{display: 'flex', gap: '8px'}}>
+            <span style={{fontWeight: 500, width: '80px'}}>銷售額：</span>
+            <span style={{color: '#2563eb', fontFamily: 'monospace'}}>
+              {subtotal.toLocaleString()}
+            </span>
+          </div>
+          <div style={{display: 'flex', gap: '8px'}}>
+            <span style={{fontWeight: 500, width: '80px'}}>營業稅：</span>
+            <span style={{color: '#2563eb', fontFamily: 'monospace'}}>
+              {tax.toLocaleString()}
+            </span>
+          </div>
+          <div style={{display: 'flex', gap: '8px', marginTop: '8px'}}>
+            <span style={{fontWeight: 'bold', width: '80px'}}>總計：</span>
+            <span
+              style={{
+                color: '#2563eb',
+                fontWeight: 'bold',
+                fontFamily: 'monospace',
+              }}
+            >
+              {amount.toLocaleString()}
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  },
+  extractProps: (request) => {
+    const url = new URL(request.url);
+    const data = parseInvoiceData(url.searchParams);
+    if (!data) {
+      throw new Error('Invalid invoice data');
     }
-  }
-
-  // 處理 CORS preflight 請求
-  if (request.method === 'OPTIONS') {
-    return new Response(null, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      },
-    });
-  }
-
-  // 其他請求交給 Pages 處理
-  return context.next();
-}
+    return data;
+  },
+});

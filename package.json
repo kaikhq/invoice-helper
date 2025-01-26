@@ -12,6 +12,7 @@
     "pages:deploy": "npm run build && wrangler pages deploy ./dist"
   },
   "dependencies": {
+    "@cloudflare/pages-plugin-vercel-og": "^0.1.2",
     "@vercel/og": "^0.6.2",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
