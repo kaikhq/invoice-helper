@@ -6,9 +6,8 @@ interface PreviewCardProps {
 
 export function PreviewCard({ children }: PreviewCardProps) {
   return (
-    <div className="top-6">
-      <div className="">
-        <h1>Hello card</h1>
+    <div className="sticky top-6">
+      <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-white/80">
         {children}
       </div>
     </div>
