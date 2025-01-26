@@ -37,25 +37,11 @@ export default function App() {
   const today = getTaiwanDate();
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50'>
-      <div className='container mx-auto max-w-7xl px-4 py-6'>
-        <div className='grid grid-cols-1 lg:grid-cols-12 gap-6 items-start'>
-          <div className='lg:col-span-8'>
-            <PreviewCard>
-              <InvoicePreview
-                buyer={buyer}
-                uniformNumber={uniformNumber}
-                date={today}
-                totalAmount={totalAmount}
-                subtotalAmount={subtotalAmount}
-                amountType={amountType}
-                taxType={taxType}
-                {...calculation}
-              />
-            </PreviewCard>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
+      <div className="container mx-auto max-w-7xl px-4 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Form Section - 4 columns */}
-          <div className='lg:col-span-4 space-y-6'>
+          <div className="lg:col-span-4 space-y-6">
             <FormCard>
               <InvoiceForm
                 buyer={buyer}
@@ -73,12 +59,26 @@ export default function App() {
                 calculation={calculation}
               />
             </FormCard>
-
+            
             {/* Advertisement Card */}
-            {/* <AdCard /> */}
+            <AdCard />
           </div>
 
           {/* Preview Section - 8 columns */}
+          <div className="lg:col-span-8">
+            <PreviewCard>
+              <InvoicePreview
+                buyer={buyer}
+                uniformNumber={uniformNumber}
+                date={today}
+                totalAmount={totalAmount}
+                subtotalAmount={subtotalAmount}
+                amountType={amountType}
+                taxType={taxType}
+                {...calculation}
+              />
+            </PreviewCard>
+          </div>
         </div>
       </div>
 
