@@ -3,10 +3,9 @@ import { formatChineseAmount } from '../utils/numberUtils';
 import { InvoiceData, InvoiceCalculation } from '../types/invoice';
 import { CalculationSummary, InvoiceHeader, InvoiceTable } from './invoice-preview';
 import { InvoiceTips } from './invoice-preview/InvoiceTips';
-import { Download, Link, Check } from 'lucide-react';
-import { useCallback, useRef, useState } from 'react';
-import html2canvas from 'html2canvas';
-import { getInvoiceImageUrl } from '../services/api';
+import { Download, Share } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import { generateInvoiceImage } from '../services/api';
 
 interface InvoicePreviewProps extends InvoiceData, InvoiceCalculation {}
 
@@ -14,97 +13,110 @@ export function InvoicePreview({
   buyer,
   uniformNumber,
   date,
-  totalAmount,
-  subtotalAmount,
-  amountType,
   taxType,
   tax,
   subtotal,
-  amount
+  amount,
+  ...rest
 }: InvoicePreviewProps) {
-  const [copied, setCopied] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const chineseAmount = formatChineseAmount(amount);
   const formattedDate = formatTaiwanDate(date);
   const invoicePeriod = getInvoicePeriod(date);
-  const invoiceRef = useRef<HTMLDivElement>(null);
 
   const handleDownload = useCallback(async () => {
-    if (!invoiceRef.current) return;
-
     try {
-      const canvas = await html2canvas(invoiceRef.current, {
-        scale: 2, // 提高解析度
-        backgroundColor: '#ffffff',
-        logging: false,
+      setIsGenerating(true);
+      const imageUrl = await generateInvoiceImage({
+        buyer,
+        uniformNumber,
+        date,
+        taxType,
+        ...rest
       });
 
       const link = document.createElement('a');
       link.download = `發票_${uniformNumber || '未填寫'}_${date}.png`;
-      link.href = canvas.toDataURL('image/png');
+      link.href = imageUrl;
       link.click();
+
+      // 清理 URL object
+      URL.revokeObjectURL(imageUrl);
     } catch (error) {
       console.error('下載發票預覽失敗:', error);
+    } finally {
+      setIsGenerating(false);
     }
-  }, [uniformNumber, date]);
+  }, [buyer, uniformNumber, date, taxType, rest]);
 
-  const handleCopyUrl = useCallback(async () => {
+  const handleShare = useCallback(async () => {
     try {
-      const url = getInvoiceImageUrl({
+      setIsGenerating(true);
+      const imageUrl = await generateInvoiceImage({
         buyer,
         uniformNumber,
         date,
-        totalAmount,
-        subtotalAmount,
-        amountType,
-        taxType
+        taxType,
+        ...rest
       });
 
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      // 從 URL 取得 Blob
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+
+      // 清理 URL object
+      URL.revokeObjectURL(imageUrl);
+
+      // 使用 Web Share API 分享
+      if (navigator.share) {
+        const file = new File([blob], `發票_${uniformNumber || '未填寫'}_${date}.png`, {
+          type: 'image/png'
+        });
+
+        await navigator.share({
+          title: '統一發票預覽',
+          files: [file]
+        });
+      } else {
+        // 如果不支援分享 API，則複製到剪貼簿
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            'image/png': blob
+          })
+        ]);
+        alert('圖片已複製到剪貼簿');
+      }
     } catch (error) {
-      console.error('複製網址失敗:', error);
+      console.error('分享發票預覽失敗:', error);
+    } finally {
+      setIsGenerating(false);
     }
-  }, [buyer, uniformNumber, date, totalAmount, subtotalAmount, amountType, taxType]);
+  }, [buyer, uniformNumber, date, taxType, rest]);
 
   return (
     <div className="space-y-6">
       {/* Action Buttons */}
       <div className="flex justify-end gap-2">
         <button
-          onClick={handleCopyUrl}
-          className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-            copied
-              ? 'bg-green-50 text-green-700'
-              : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
-          }`}
+          onClick={handleShare}
+          disabled={isGenerating}
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {copied ? (
-            <>
-              <Check className="w-4 h-4" />
-              已複製網址
-            </>
-          ) : (
-            <>
-              <Link className="w-4 h-4" />
-              複製圖片網址
-            </>
-          )}
+          <Share className="w-4 h-4" />
+          分享預覽圖
         </button>
         <button
           onClick={handleDownload}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+          disabled={isGenerating}
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Download className="w-4 h-4" />
-          下載發票預覽
+          下載預覽圖
         </button>
       </div>
 
-      {/* Calculation Summary */}
-      <CalculationSummary tax={tax} subtotal={subtotal} amount={amount} />
-      
       {/* Invoice Preview */}
-      <div ref={invoiceRef} className="border border-gray-300 rounded-lg bg-white">
+      <div id="invoice-preview" className="border border-gray-300 rounded-lg bg-white">
         <InvoiceHeader
           invoicePeriod={invoicePeriod}
           buyer={buyer}

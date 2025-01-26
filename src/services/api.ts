@@ -1,47 +1,30 @@
-const API_BASE_URL = process.env.NODE_ENV === 'production'
-  ? 'https://invoice-generator.pages.dev'
-  : 'http://localhost:8788';
+import {InvoiceData} from '../types/invoice';
 
-interface GenerateImageParams {
-  buyer: string;
-  uniformNumber: string;
-  date: string;
-  totalAmount: string;
-  subtotalAmount: string;
-  amountType: 'total' | 'subtotal';
-  taxType: 'regular' | 'zero-rate' | 'exempt';
-}
+export async function generateInvoiceImage(data: InvoiceData): Promise<string> {
+  try {
+    // 將所有參數編碼並加入 URL
+    const params = new URLSearchParams({
+      buyer: data.buyer,
+      uniformNumber: data.uniformNumber,
+      date: data.date,
+      totalAmount: data.totalAmount,
+      subtotalAmount: data.subtotalAmount,
+      amountType: data.amountType,
+      taxType: data.taxType,
+    });
 
-export async function generateInvoiceImage(params: GenerateImageParams): Promise<Blob> {
-  // 將參數編碼到 URL 中
-  const searchParams = new URLSearchParams();
-  Object.entries(params).forEach(([key, value]) => {
-    searchParams.append(key, value);
-  });
+    // 呼叫 Cloudflare Worker 的 API 端點
+    const response = await fetch(`/api/generate-image?${params.toString()}`);
 
-  const response = await fetch(
-    `${API_BASE_URL}/api/generate-image?${searchParams.toString()}`,
-    {
-      method: 'GET',
-      headers: {
-        'Accept': 'image/png',
-      },
+    if (!response.ok) {
+      throw new Error('Failed to generate invoice image');
     }
-  );
 
-  if (!response.ok) {
-    throw new Error('Failed to generate invoice image');
+    // 將回應轉換為 Blob
+    const blob = await response.blob();
+    return URL.createObjectURL(blob);
+  } catch (error) {
+    console.error('生成發票圖片失敗:', error);
+    throw error;
   }
-
-  return response.blob();
-}
-
-// 取得圖片 URL（方便分享或直接使用）
-export function getInvoiceImageUrl(params: GenerateImageParams): string {
-  const searchParams = new URLSearchParams();
-  Object.entries(params).forEach(([key, value]) => {
-    searchParams.append(key, value);
-  });
-  
-  return `${API_BASE_URL}/api/generate-image?${searchParams.toString()}`;
 }
