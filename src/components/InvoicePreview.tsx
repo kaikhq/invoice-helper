@@ -8,7 +8,7 @@ import {
 } from './invoice-preview';
 import {InvoiceTips} from './invoice-preview/InvoiceTips';
 import {Download} from 'lucide-react';
-import {useCallback, useRef, useEffect} from 'react';
+import {useCallback, useRef} from 'react';
 import html2canvas from 'html2canvas';
 
 interface InvoicePreviewProps extends InvoiceData, InvoiceCalculation {}
@@ -27,13 +27,6 @@ export function InvoicePreview({
   const invoicePeriod = getInvoicePeriod(date);
   const invoiceRef = useRef<HTMLDivElement>(null);
 
-  // 添加一個標記，表示內容已經渲染完成
-  useEffect(() => {
-    if (invoiceRef.current) {
-      invoiceRef.current.setAttribute('data-rendered', 'true');
-    }
-  }, [buyer, uniformNumber, date, taxType, subtotal, tax, amount]);
-
   const handleDownload = useCallback(async () => {
     if (!invoiceRef.current) return;
 
@@ -43,15 +36,6 @@ export function InvoicePreview({
         backgroundColor: '#ffffff',
         logging: false,
         useCORS: true, // 允許跨域圖片
-        onclone: (clonedDoc) => {
-          // 確保克隆的文檔中的樣式都已經應用
-          const clonedElement = clonedDoc.querySelector(
-            '[data-rendered="true"]'
-          );
-          if (clonedElement) {
-            clonedElement.classList.add('screenshot-ready');
-          }
-        },
       });
 
       const link = document.createElement('a');
