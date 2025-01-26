@@ -82,6 +82,7 @@ export function InvoicePreview({
       {/* Invoice Preview */}
       <div
         ref={invoiceRef}
+        id="invoice-preview"
         className='border border-gray-300 rounded-lg bg-white print:shadow-none'
         style={{contain: 'paint'}} // 優化渲染性能
       >
