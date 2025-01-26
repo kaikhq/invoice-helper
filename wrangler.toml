@@ -1,12 +1,13 @@
 name = "invoice-generator"
 compatibility_date = "2024-01-01"
-main = "workers-site/index.js"
 
 [site]
 bucket = "./dist"
+entry-point = "workers-site"
 
 [build]
 command = "npm run build"
+output_dir = "dist"
 
 [env.production]
 workers_dev = true
