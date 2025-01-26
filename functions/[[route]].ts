@@ -1,12 +1,17 @@
+import type {PluginArgs} from '@cloudflare/pages-plugin-vercel-og';
+import {ImageResponse} from '@cloudflare/pages-plugin-vercel-og/api';
 import {InvoiceData} from '../src/types/invoice';
 import {calculateInvoiceAmounts} from '../src/utils/invoiceUtils';
 import {formatTaiwanDate, getInvoicePeriod} from '../src/utils/dateUtils';
 import {formatChineseAmount} from '../src/utils/numberUtils';
-import vercelOGPagesPlugin from '@cloudflare/pages-plugin-vercel-og';
 
-interface Props extends InvoiceData {}
+type vercelOGPagesPluginFunction<
+  Env = unknown,
+  Params extends string = any,
+  Data extends Record<string, unknown> = Record<string, unknown>
+> = PagesPluginFunction<Env, Params, Data, PluginArgs>;
 
-function parseInvoiceData(searchParams: URLSearchParams): Props | null {
+function parseInvoiceData(searchParams: URLSearchParams): InvoiceData | null {
   try {
     return {
       buyer: searchParams.get('buyer') || '',
@@ -25,263 +30,271 @@ function parseInvoiceData(searchParams: URLSearchParams): Props | null {
   }
 }
 
-export const onRequest = vercelOGPagesPlugin<Props>({
-  component: ({
-    buyer,
-    uniformNumber,
-    date,
-    totalAmount,
-    subtotalAmount,
-    amountType,
-    taxType,
-  }) => {
-    const {amount, tax, subtotal} = calculateInvoiceAmounts(
-      totalAmount,
-      subtotalAmount,
-      amountType,
-      taxType
-    );
+export const onRequestGet: vercelOGPagesPluginFunction = async ({
+  request,
+  next,
+}) => {
+  const url = new URL(request.url);
 
-    const formattedDate = formatTaiwanDate(date);
-    const invoicePeriod = getInvoicePeriod(date);
-    const chineseAmount = formatChineseAmount(amount);
+  // 只處理 /api/generate-image 路徑
+  if (!url.pathname.startsWith('/api/generate-image')) {
+    return next();
+  }
 
-    return {
-      type: 'div',
-      props: {
-        style: {
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
-          width: '100%',
-          backgroundColor: 'white',
-          padding: '40px',
-          fontFamily: 'sans-serif',
-        },
-        children: [
-          {
-            type: 'div',
-            props: {
-              style: {
-                textAlign: 'center',
-                marginBottom: '32px',
-              },
-              children: [
-                {
-                  type: 'h1',
-                  props: {
-                    style: {
-                      fontSize: '24px',
-                      fontWeight: 'bold',
-                      marginBottom: '8px',
-                    },
-                    children: '統一發票（三聯式）',
-                  },
-                },
-                {
-                  type: 'p',
-                  props: {
-                    style: {
-                      fontSize: '16px',
-                      color: '#666666',
-                    },
-                    children: invoicePeriod,
-                  },
-                },
-              ],
-            },
-          },
-          {
-            type: 'div',
-            props: {
-              style: {
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '16px',
-              },
-              children: [
-                {
-                  type: 'div',
-                  props: {
-                    style: {
-                      display: 'flex',
-                      gap: '8px',
-                    },
-                    children: [
-                      {
-                        type: 'span',
-                        props: {
-                          style: {
-                            fontWeight: 500,
-                            width: '80px',
-                          },
-                          children: '買受人：',
-                        },
-                      },
-                      {
-                        type: 'span',
-                        props: {
-                          style: {
-                            color: '#2563eb',
-                          },
-                          children: buyer || '　',
-                        },
-                      },
-                    ],
-                  },
-                },
-                {
-                  type: 'div',
-                  props: {
-                    style: {
-                      display: 'flex',
-                      gap: '8px',
-                    },
-                    children: [
-                      {
-                        type: 'span',
-                        props: {
-                          style: {
-                            fontWeight: 500,
-                            width: '80px',
-                          },
-                          children: '統一編號：',
-                        },
-                      },
-                      {
-                        type: 'span',
-                        props: {
-                          style: {
-                            color: '#2563eb',
-                            fontFamily: 'monospace',
-                          },
-                          children: uniformNumber || '　',
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          {
-            type: 'div',
-            props: {
-              style: {
-                marginTop: '32px',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '16px',
-              },
-              children: [
-                {
-                  type: 'div',
-                  props: {
-                    style: {
-                      display: 'flex',
-                      gap: '8px',
-                    },
-                    children: [
-                      {
-                        type: 'span',
-                        props: {
-                          style: {
-                            fontWeight: 500,
-                            width: '80px',
-                          },
-                          children: '銷售額：',
-                        },
-                      },
-                      {
-                        type: 'span',
-                        props: {
-                          style: {
-                            color: '#2563eb',
-                            fontFamily: 'monospace',
-                          },
-                          children: subtotal.toLocaleString(),
-                        },
-                      },
-                    ],
-                  },
-                },
-                {
-                  type: 'div',
-                  props: {
-                    style: {
-                      display: 'flex',
-                      gap: '8px',
-                    },
-                    children: [
-                      {
-                        type: 'span',
-                        props: {
-                          style: {
-                            fontWeight: 500,
-                            width: '80px',
-                          },
-                          children: '營業稅：',
-                        },
-                      },
-                      {
-                        type: 'span',
-                        props: {
-                          style: {
-                            color: '#2563eb',
-                            fontFamily: 'monospace',
-                          },
-                          children: tax.toLocaleString(),
-                        },
-                      },
-                    ],
-                  },
-                },
-                {
-                  type: 'div',
-                  props: {
-                    style: {
-                      display: 'flex',
-                      gap: '8px',
-                      marginTop: '8px',
-                    },
-                    children: [
-                      {
-                        type: 'span',
-                        props: {
-                          style: {
-                            fontWeight: 'bold',
-                            width: '80px',
-                          },
-                          children: '總計：',
-                        },
-                      },
-                      {
-                        type: 'span',
-                        props: {
-                          style: {
-                            color: '#2563eb',
-                            fontWeight: 'bold',
-                            fontFamily: 'monospace',
-                          },
-                          children: amount.toLocaleString(),
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    };
-  },
-  extractProps: (request) => {
-    const url = new URL(request.url);
+  try {
     const data = parseInvoiceData(url.searchParams);
     if (!data) {
-      throw new Error('Invalid invoice data');
+      return new Response('Invalid invoice data', {status: 400});
     }
-    return data;
-  },
-});
+
+    const {amount, tax, subtotal} = calculateInvoiceAmounts(
+      data.totalAmount,
+      data.subtotalAmount,
+      data.amountType,
+      data.taxType
+    );
+
+    const formattedDate = formatTaiwanDate(data.date);
+    const invoicePeriod = getInvoicePeriod(data.date);
+    const chineseAmount = formatChineseAmount(amount);
+
+    return new ImageResponse(
+      {
+        type: 'div',
+        props: {
+          style: {
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%',
+            height: '100%',
+            padding: '40px',
+            backgroundColor: 'white',
+            fontFamily: 'sans-serif',
+          },
+          children: [
+            {
+              type: 'div',
+              props: {
+                style: {
+                  textAlign: 'center',
+                  marginBottom: '32px',
+                },
+                children: [
+                  {
+                    type: 'h1',
+                    props: {
+                      style: {
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                        marginBottom: '8px',
+                      },
+                      children: '統一發票（三聯式）',
+                    },
+                  },
+                  {
+                    type: 'p',
+                    props: {
+                      style: {
+                        fontSize: '16px',
+                        color: '#666666',
+                      },
+                      children: invoicePeriod,
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              type: 'div',
+              props: {
+                style: {
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '16px',
+                },
+                children: [
+                  {
+                    type: 'div',
+                    props: {
+                      style: {
+                        display: 'flex',
+                        gap: '8px',
+                      },
+                      children: [
+                        {
+                          type: 'span',
+                          props: {
+                            style: {
+                              fontWeight: 500,
+                              width: '80px',
+                            },
+                            children: '買受人：',
+                          },
+                        },
+                        {
+                          type: 'span',
+                          props: {
+                            style: {
+                              color: '#2563eb',
+                            },
+                            children: data.buyer || '　',
+                          },
+                        },
+                      ],
+                    },
+                  },
+                  {
+                    type: 'div',
+                    props: {
+                      style: {
+                        display: 'flex',
+                        gap: '8px',
+                      },
+                      children: [
+                        {
+                          type: 'span',
+                          props: {
+                            style: {
+                              fontWeight: 500,
+                              width: '80px',
+                            },
+                            children: '統一編號：',
+                          },
+                        },
+                        {
+                          type: 'span',
+                          props: {
+                            style: {
+                              color: '#2563eb',
+                              fontFamily: 'monospace',
+                            },
+                            children: data.uniformNumber || '　',
+                          },
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              type: 'div',
+              props: {
+                style: {
+                  marginTop: '32px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '16px',
+                },
+                children: [
+                  {
+                    type: 'div',
+                    props: {
+                      style: {
+                        display: 'flex',
+                        gap: '8px',
+                      },
+                      children: [
+                        {
+                          type: 'span',
+                          props: {
+                            style: {
+                              fontWeight: 500,
+                              width: '80px',
+                            },
+                            children: '銷售額：',
+                          },
+                        },
+                        {
+                          type: 'span',
+                          props: {
+                            style: {
+                              color: '#2563eb',
+                              fontFamily: 'monospace',
+                            },
+                            children: subtotal.toLocaleString(),
+                          },
+                        },
+                      ],
+                    },
+                  },
+                  {
+                    type: 'div',
+                    props: {
+                      style: {
+                        display: 'flex',
+                        gap: '8px',
+                      },
+                      children: [
+                        {
+                          type: 'span',
+                          props: {
+                            style: {
+                              fontWeight: 500,
+                              width: '80px',
+                            },
+                            children: '營業稅：',
+                          },
+                        },
+                        {
+                          type: 'span',
+                          props: {
+                            style: {
+                              color: '#2563eb',
+                              fontFamily: 'monospace',
+                            },
+                            children: tax.toLocaleString(),
+                          },
+                        },
+                      ],
+                    },
+                  },
+                  {
+                    type: 'div',
+                    props: {
+                      style: {
+                        display: 'flex',
+                        gap: '8px',
+                        marginTop: '8px',
+                      },
+                      children: [
+                        {
+                          type: 'span',
+                          props: {
+                            style: {
+                              fontWeight: 'bold',
+                              width: '80px',
+                            },
+                            children: '總計：',
+                          },
+                        },
+                        {
+                          type: 'span',
+                          props: {
+                            style: {
+                              color: '#2563eb',
+                              fontWeight: 'bold',
+                              fontFamily: 'monospace',
+                            },
+                            children: amount.toLocaleString(),
+                          },
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+      {
+        width: 800,
+        height: 600,
+      }
+    );
+  } catch (error) {
+    console.error('Error generating invoice image:', error);
+    return new Response('Failed to generate invoice image', {status: 500});
+  }
+};
