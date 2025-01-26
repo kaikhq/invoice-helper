@@ -76,7 +76,9 @@ export const onRequestGet: vercelOGPagesPluginFunction = async ({
               type: 'div',
               props: {
                 style: {
-                  textAlign: 'center',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
                   marginBottom: '32px',
                 },
                 children: [
@@ -118,6 +120,7 @@ export const onRequestGet: vercelOGPagesPluginFunction = async ({
                     props: {
                       style: {
                         display: 'flex',
+                        alignItems: 'center',
                         gap: '8px',
                       },
                       children: [
@@ -148,6 +151,7 @@ export const onRequestGet: vercelOGPagesPluginFunction = async ({
                     props: {
                       style: {
                         display: 'flex',
+                        alignItems: 'center',
                         gap: '8px',
                       },
                       children: [
@@ -181,10 +185,10 @@ export const onRequestGet: vercelOGPagesPluginFunction = async ({
               type: 'div',
               props: {
                 style: {
-                  marginTop: '32px',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '16px',
+                  marginTop: '32px',
                 },
                 children: [
                   {
@@ -192,6 +196,7 @@ export const onRequestGet: vercelOGPagesPluginFunction = async ({
                     props: {
                       style: {
                         display: 'flex',
+                        alignItems: 'center',
                         gap: '8px',
                       },
                       children: [
@@ -223,6 +228,7 @@ export const onRequestGet: vercelOGPagesPluginFunction = async ({
                     props: {
                       style: {
                         display: 'flex',
+                        alignItems: 'center',
                         gap: '8px',
                       },
                       children: [
@@ -254,6 +260,7 @@ export const onRequestGet: vercelOGPagesPluginFunction = async ({
                     props: {
                       style: {
                         display: 'flex',
+                        alignItems: 'center',
                         gap: '8px',
                         marginTop: '8px',
                       },
