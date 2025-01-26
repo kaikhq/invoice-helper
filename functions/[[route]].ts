@@ -1,3 +1,4 @@
+import { ImageResponse } from '@vercel/og';
 import { createInvoiceImage } from '../src/utils/imageGenerator';
 import { InvoiceData } from '../src/types/invoice';
 
@@ -41,15 +42,25 @@ export async function onRequest(context: any) {
         );
       }
 
-      const image = await createInvoiceImage(data);
+      const svg = await createInvoiceImage(data);
       
-      return new Response(image, {
-        headers: {
-          'Content-Type': 'image/png',
-          'Cache-Control': 'public, max-age=3600',
-          'Access-Control-Allow-Origin': '*',
+      // 使用 @vercel/og 將 SVG 轉換為 PNG
+      return new ImageResponse(
+        {
+          type: 'div',
+          props: {
+            dangerouslySetInnerHTML: { __html: svg },
+          },
+        },
+        {
+          width: 800,
+          height: 600,
+          headers: {
+            'Cache-Control': 'public, max-age=3600',
+            'Access-Control-Allow-Origin': '*',
+          },
         }
-      });
+      );
     } catch (error) {
       return new Response(
         JSON.stringify({ error: 'Failed to generate image' }), {

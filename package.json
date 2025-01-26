@@ -12,13 +12,14 @@
     "pages:deploy": "npm run build && wrangler pages deploy ./dist"
   },
   "dependencies": {
-    "@resvg/resvg-js": "^2.6.0",
+    "@vercel/og": "^0.6.2",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
     "html2canvas": "^1.4.1",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "satori": "^0.10.13"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.0.0",
