@@ -59,7 +59,7 @@ export function InvoicePreview({
       <CalculationSummary tax={tax} subtotal={subtotal} amount={amount} />
       
       {/* Invoice Preview */}
-      <div ref={invoiceRef} className="border border-gray-300 rounded-lg bg-white">
+      <div ref={invoiceRef} id="invoice-preview" className="border border-gray-300 rounded-lg bg-white">
         <InvoiceHeader
           invoicePeriod={invoicePeriod}
           buyer={buyer}
