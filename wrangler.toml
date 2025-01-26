@@ -7,7 +7,6 @@ entry-point = "workers-site"
 
 [build]
 command = "npm run build"
-output_dir = "dist"
 
 [env.production]
 workers_dev = true
