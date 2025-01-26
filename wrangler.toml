@@ -10,3 +10,7 @@ command = "npm run build"
 
 [env.production]
 workers_dev = true
+
+[observability]
+enabled = true
+head_sampling_rate = 1 # optional. default = 1.
