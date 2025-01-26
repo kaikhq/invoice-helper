@@ -66,6 +66,7 @@ export default function App() {
 
           {/* Preview Section - 8 columns */}
           <div className="lg:col-span-8">
+            <h1>Hello 1</h1>
             <PreviewCard>
               <InvoicePreview
                 buyer={buyer}
