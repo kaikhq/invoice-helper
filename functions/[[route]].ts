@@ -1,62 +1,50 @@
-import puppeteer from '@cloudflare/puppeteer';
+import { createInvoiceImage } from '../src/utils/imageGenerator';
 
-export async function onRequestGet({request, env}) {
+export interface Env {
+  // 如果需要使用 Cloudflare KV 或其他綁定，在這裡定義
+}
+
+export async function onRequest(context: any) {
+  const { request } = context;
   const url = new URL(request.url);
-
-  // 只處理 /api/generate-image 路徑
-  if (!url.pathname.startsWith('/api/generate-image')) {
-    return new Response('Not Found', {status: 404});
+  
+  // 處理圖片生成 API
+  if (request.method === 'POST' && url.pathname === '/api/generate-image') {
+    try {
+      const data = await request.json();
+      const image = await createInvoiceImage(data);
+      
+      return new Response(image, {
+        headers: {
+          'Content-Type': 'image/png',
+          'Cache-Control': 'public, max-age=3600',
+          'Access-Control-Allow-Origin': '*',
+        }
+      });
+    } catch (error) {
+      return new Response(
+        JSON.stringify({ error: 'Failed to generate image' }), {
+          status: 500,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          }
+        }
+      );
+    }
   }
 
-  try {
-    // 啟動瀏覽器
-    const browser = await puppeteer.launch(env.MYBROWSER);
-    const page = await browser.newPage();
-
-    // 設定視窗大小
-    await page.setViewport({
-      width: 800,
-      height: 600,
-      deviceScaleFactor: 2,
-    });
-
-    // 建構預覽頁面的 URL
-    const previewUrl = new URL(url.origin);
-    previewUrl.pathname = '/preview';
-    previewUrl.search = url.search;
-
-    // 導航到預覽頁面
-    await page.goto(previewUrl.toString(), {
-      waitUntil: 'networkidle0',
-    });
-
-    // 等待發票元素載入
-    await page.waitForSelector('#invoice-preview');
-
-    // 截圖
-    const screenshot = await page.screenshot({
-      type: 'png',
-      clip: {
-        x: 0,
-        y: 0,
-        width: 800,
-        height: 600,
-      },
-      omitBackground: true,
-    });
-
-    // 關閉瀏覽器
-    await browser.close();
-
-    // 回傳圖片
-    return new Response(screenshot, {
+  // 處理 CORS preflight 請求
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
       headers: {
-        'Content-Type': 'image/png',
-        'Cache-Control': 'public, max-age=31536000',
-      },
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      }
     });
-  } catch (error) {
-    console.error('Error generating invoice image:', error);
-    return new Response('Failed to generate invoice image', {status: 500});
   }
+  
+  // 其他請求交給 Pages 處理
+  return context.next();
 }
