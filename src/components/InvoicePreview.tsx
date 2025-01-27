@@ -11,7 +11,9 @@ import {Download} from 'lucide-react';
 import {useCallback, useRef} from 'react';
 import html2canvas from 'html2canvas';
 
-interface InvoicePreviewProps extends InvoiceData, InvoiceCalculation {}
+interface InvoicePreviewProps extends InvoiceData, InvoiceCalculation {
+  itemName?: string;
+}
 
 export function InvoicePreview({
   buyer,
@@ -21,6 +23,7 @@ export function InvoicePreview({
   subtotal,
   tax,
   amount,
+  itemName,
 }: InvoicePreviewProps) {
   const chineseAmount = formatChineseAmount(amount);
   const formattedDate = formatTaiwanDate(date);
@@ -83,6 +86,7 @@ export function InvoicePreview({
           amount={amount}
           taxType={taxType}
           chineseAmount={chineseAmount}
+          itemName={itemName}
         />
       </div>
 

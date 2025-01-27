@@ -1,13 +1,14 @@
 interface ItemRowsProps {
   subtotal: number;
+  itemName?: string;
 }
 
-export function ItemRows({ subtotal }: ItemRowsProps) {
+export function ItemRows({ subtotal, itemName }: ItemRowsProps) {
   return (
     <>
       <tr>
         <td className="border border-gray-300 p-2 text-blue-600" colSpan={2}>
-          請填寫品名
+          {itemName || '請填寫品名'}
         </td>
         <td className="border border-gray-300 p-2 text-right text-blue-600 font-mono tabular-nums">
           1

@@ -18,6 +18,7 @@ interface InvoiceTableProps {
     unit: string;
     show: boolean;
   }>;
+  itemName?: string;
 }
 
 export function InvoiceTable({
@@ -25,14 +26,15 @@ export function InvoiceTable({
   tax,
   amount,
   taxType,
-  chineseAmount
+  chineseAmount,
+  itemName
 }: InvoiceTableProps) {
   return (
     <div className="p-4">
       <TableLayout>
         <TableHeader />
         <tbody>
-          <ItemRows subtotal={subtotal} />
+          <ItemRows subtotal={subtotal} itemName={itemName} />
           <SealRow />
           <SubtotalRow subtotal={subtotal} />
           <TaxRows tax={tax} taxType={taxType} />

@@ -17,11 +17,13 @@ export default function App() {
   const [taxType, setTaxType] = useState<'regular' | 'zero-rate' | 'exempt'>(
     'regular'
   );
+  const [itemName, setItemName] = useState('');
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const prefilledUniformNumber = params.get('uniformNumber');
     const prefilledAmount = params.get('amount');
+    const prefilledItemName = params.get('itemName');
 
     if (prefilledUniformNumber) {
       setUniformNumber(prefilledUniformNumber);
@@ -30,6 +32,10 @@ export default function App() {
     if (prefilledAmount) {
       setTotalAmount(prefilledAmount);
       setAmountType('total');
+    }
+
+    if (prefilledItemName) {
+      setItemName(prefilledItemName);
     }
   }, []);
 
@@ -82,6 +88,7 @@ export default function App() {
                 subtotalAmount={subtotalAmount}
                 amountType={amountType}
                 taxType={taxType}
+                itemName={itemName}
                 {...calculation}
               />
             </PreviewCard>
