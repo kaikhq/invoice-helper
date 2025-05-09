@@ -2,7 +2,7 @@
   "name": "invoice-generator",
   "compatibility_date": "2024-11-06",
   "compatibility_flags": ["nodejs_compat_v2"],
-  "main": "./dist/worker/index.js",
+  "main": "./dist/index.html",
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS"
