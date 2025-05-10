@@ -17,8 +17,6 @@ Invoice Generator 是一個基於 React、TypeScript 與 Vite 的輕量級發票
     - [建置專案](#建置專案)
     - [預覽建置產物](#預覽建置產物)
   - [專案結構](#專案結構)
-  - [部署](#部署)
-    - [Cloudflare Pages 部署](#cloudflare-pages-部署)
   - [貢獻指南](#貢獻指南)
   - [授權條款](#授權條款)
   - [特別感謝](#特別感謝)
@@ -99,31 +97,6 @@ npm run preview
 ├── tailwind.config.js      // Tailwind CSS 設定檔
 ├── postcss.config.js       // PostCSS 設定
 └── wrangler.toml           // Cloudflare Workers Pages 配置
-```
-
-## 部署
-
-### Cloudflare Pages 部署
-
-本專案已整合 Cloudflare Wrangler 工具，請依照以下步驟進行部署：
-
-1. 確認已安裝 [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/) 並登入你的 Cloudflare 帳戶。
-2. 建置專案：
-
-   ```bash
-   npm run build
-   ```
-
-3. 部署至 Cloudflare Pages：
-
-   ```bash
-   npm run pages:deploy
-   ```
-
-另外，你也可以使用本地環境進行預覽：
-
-```bash
-npm run pages:dev
 ```
 
 ## 貢獻指南
