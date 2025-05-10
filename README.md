@@ -6,13 +6,22 @@ Invoice Generator 是一個基於 React、TypeScript 與 Vite 的輕量級發票
 
 ## 目錄
 
-- [功能簡介](#功能簡介)
-- [技術棧](#技術棧)
-- [快速開始](#快速開始)
-- [專案結構](#專案結構)
-- [部署](#部署)
-- [貢獻指南](#貢獻指南)
-- [授權條款](#授權條款)
+- [Invoice Generator](#invoice-generator)
+  - [目錄](#目錄)
+  - [功能簡介](#功能簡介)
+  - [技術棧](#技術棧)
+  - [快速開始](#快速開始)
+    - [前置需求](#前置需求)
+    - [安裝專案依賴](#安裝專案依賴)
+    - [本地開發](#本地開發)
+    - [建置專案](#建置專案)
+    - [預覽建置產物](#預覽建置產物)
+  - [專案結構](#專案結構)
+  - [部署](#部署)
+    - [Cloudflare Pages 部署](#cloudflare-pages-部署)
+  - [貢獻指南](#貢獻指南)
+  - [授權條款](#授權條款)
+  - [特別感謝](#特別感謝)
 
 ## 功能簡介
 
@@ -55,7 +64,7 @@ yarn install
 npm run dev
 ```
 
-專案會開啟在預設的 Vite 開發伺服器上，通常是 http://localhost:3000。
+專案會開啟在預設的 Vite 開發伺服器上，通常是 <http://localhost:3000。>
 
 ### 建置專案
 
@@ -100,10 +109,13 @@ npm run preview
 
 1. 確認已安裝 [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/) 並登入你的 Cloudflare 帳戶。
 2. 建置專案：
+
    ```bash
    npm run build
    ```
+
 3. 部署至 Cloudflare Pages：
+
    ```bash
    npm run pages:deploy
    ```
@@ -128,6 +140,10 @@ npm run pages:dev
 
 本專案採用 [MIT License](LICENSE) 授權，詳細條款請參閱 LICENSE 文件。
 
+## 特別感謝
+
+- [台灣公司資料](https://company.g0v.ronny.tw/) 提供統一編號查詢服務
+
 ---
 
-Invoice Generator 旨在提供一個簡單且高效的解決方案，協助使用者快速生成符合規範的發票。希望這對你的業務流程帶來便利與效率！ 
+Invoice Generator 旨在提供一個簡單且高效的解決方案，協助使用者快速生成符合規範的發票。希望這對你的業務流程帶來便利與效率！
