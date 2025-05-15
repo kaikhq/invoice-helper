@@ -22,4 +22,6 @@ export interface InvoiceFormProps extends Omit<InvoiceData, 'date'> {
   setAmountType: (value: 'total' | 'subtotal') => void;
   setTaxType: (value: 'regular' | 'zero-rate' | 'exempt') => void;
   calculation: InvoiceCalculation;
+  itemName: string;
+  setItemName: (value: string) => void;
 }

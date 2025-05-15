@@ -17,7 +17,9 @@ export function InvoiceForm({
   setAmountType,
   taxType,
   setTaxType,
-  calculation
+  calculation,
+  itemName,
+  setItemName
 }: InvoiceFormProps) {
   // 從 URL 參數中檢查是否有預填資料
   const searchParams = new URLSearchParams(window.location.search);
@@ -63,6 +65,8 @@ export function InvoiceForm({
         setTaxType={setTaxType}
         calculation={calculation}
         autoFocus={shouldFocusAmount}
+        itemName={itemName}
+        setItemName={setItemName}
       />
 
       <div className="h-px bg-gray-100" />
