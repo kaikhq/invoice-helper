@@ -70,6 +70,8 @@ export default function App() {
                 taxType={taxType}
                 setTaxType={setTaxType}
                 calculation={calculation}
+                itemName={itemName}
+                setItemName={setItemName}
               />
             </FormCard>
 

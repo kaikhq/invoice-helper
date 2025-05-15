@@ -16,6 +16,8 @@ interface InvoiceInfoStepProps {
   setTaxType: (value: 'regular' | 'zero-rate' | 'exempt') => void;
   calculation: any;
   autoFocus?: boolean;
+  itemName: string;
+  setItemName: (value: string) => void;
 }
 
 const taxTypeOptions = [
@@ -33,7 +35,9 @@ export const InvoiceInfoStep = React.memo(function InvoiceInfoStep({
   setAmountType,
   taxType,
   setTaxType,
-  autoFocus
+  autoFocus,
+  itemName,
+  setItemName
 }: InvoiceInfoStepProps) {
   return (
     <FormStep number={1} title="發票資訊">
@@ -97,6 +101,16 @@ export const InvoiceInfoStep = React.memo(function InvoiceInfoStep({
             onChange={(value) => setTaxType(value as 'regular' | 'zero-rate' | 'exempt')}
             options={taxTypeOptions}
           />
+        </FormField>
+        <FormField label="品名">
+        <input
+          type="test"
+          className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-300"
+          value={itemName}
+          onChange={(e)=>setItemName(e.target.value)}
+          placeholder="請輸入品名"
+          autoFocus={autoFocus}
+        />
         </FormField>
       </div>
     </FormStep>
