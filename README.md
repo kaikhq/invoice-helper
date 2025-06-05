@@ -1,6 +1,6 @@
 # Invoice Generator
 
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://github.com/kaikhq/invoice-helper)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/kaikhq/invoice-helper)
 
 Invoice Generator 是一個基於 React、TypeScript 與 Vite 的輕量級發票生成網頁應用程式，主要用途是讓使用者能夠透過填寫表單來生成、預覽及計算發票金額，並可利用 URL 參數預設部分欄位數據。此專案同時內建 Cloudflare Pages 與 Wrangler 部署相關設定，使部署更為簡便。
 
