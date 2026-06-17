@@ -1,10 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Noto Sans TC', sans-serif;
+}
 
 @layer base {
+  /* Preserve v3 default border color (v4 defaults borders to currentColor) */
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+
   html {
     @apply h-full font-sans;
   }
