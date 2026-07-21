@@ -21,7 +21,7 @@ export async function onRequest(context: any) {
           'Access-Control-Allow-Origin': '*',
         }
       });
-    } catch (error) {
+    } catch {
       return new Response(
         JSON.stringify({ error: 'Failed to generate image' }), {
           status: 500,

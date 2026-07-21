@@ -1,4 +1,4 @@
-import { Calculator, Plus, Equal } from 'lucide-react';
+import { Plus, Equal } from 'lucide-react';
 
 interface CalculationSummaryProps {
   tax: number;

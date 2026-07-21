@@ -1,5 +1,4 @@
 import React from 'react';
-import { useDebounce } from '../hooks/useDebounce';
 
 interface AmountInputProps {
   value: string;
@@ -14,8 +13,6 @@ export const AmountInput = React.memo(function AmountInput({
   placeholder,
   autoFocus
 }: AmountInputProps) {
-  const debouncedValue = useDebounce(value, 300);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value.replace(/[^\d]/g, '');
     onChange(newValue);

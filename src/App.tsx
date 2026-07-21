@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import {useState, useEffect} from 'react';
 import {InvoiceForm} from './components/InvoiceForm';
 import {InvoicePreview} from './components/InvoicePreview';
 import {calculateInvoiceAmounts} from './utils/invoiceUtils';

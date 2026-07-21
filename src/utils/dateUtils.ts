@@ -1,7 +1,12 @@
 import { format } from 'date-fns';
-import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
+import { utcToZonedTime } from 'date-fns-tz';
 
 const TAIWAN_TIMEZONE = 'Asia/Taipei';
+
+export interface FormattedDatePart {
+  text: string;
+  highlight: boolean;
+}
 
 const toChineseNumber = (num: number): string => {
   const chineseNumbers = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];

@@ -1,4 +1,3 @@
-import React from 'react';
 import { TableHeader } from './table/TableHeader';
 import { ItemRows } from './table/ItemRows';
 import { SealRow } from './table/SealRow';
