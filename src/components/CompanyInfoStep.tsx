@@ -15,16 +15,12 @@ export function CompanyInfoStep({
   setUniformNumber,
   buyer,
   setBuyer,
-  autoFocus
+  autoFocus,
 }: CompanyInfoStepProps) {
   return (
     <FormStep number={2} title="公司資訊">
       <div className="space-y-4">
-        <FormField
-          label="統一編號"
-          required
-          hint="輸入完整統一編號後，系統會自動帶入公司名稱"
-        >
+        <FormField label="統一編號" required hint="輸入完整統一編號後，系統會自動帶入公司名稱">
           <div className="relative">
             <input
               type="text"
@@ -51,9 +47,11 @@ export function CompanyInfoStep({
               type="text"
               className={`w-full px-3 py-2.5 border rounded-lg text-lg transition-all duration-200
                 focus:outline-none focus:border-blue-500/20 focus:ring-4 focus:ring-blue-500/10
-                ${uniformNumber.length === 8 
-                  ? 'bg-gray-50 text-gray-700 cursor-not-allowed' 
-                  : 'bg-white'}`}
+                ${
+                  uniformNumber.length === 8
+                    ? 'bg-gray-50 text-gray-700 cursor-not-allowed'
+                    : 'bg-white'
+                }`}
               placeholder={uniformNumber.length === 8 ? '查詢中...' : '自動帶入公司名稱'}
               value={buyer}
               onChange={(e) => setBuyer(e.target.value)}

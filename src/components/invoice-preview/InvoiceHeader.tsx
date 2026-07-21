@@ -7,7 +7,12 @@ interface InvoiceHeaderProps {
   formattedDate: FormattedDatePart[];
 }
 
-export function InvoiceHeader({ invoicePeriod, buyer, uniformNumber, formattedDate }: InvoiceHeaderProps) {
+export function InvoiceHeader({
+  invoicePeriod,
+  buyer,
+  uniformNumber,
+  formattedDate,
+}: InvoiceHeaderProps) {
   return (
     <div className="p-4">
       <div className="text-center mb-4">
@@ -36,10 +41,7 @@ export function InvoiceHeader({ invoicePeriod, buyer, uniformNumber, formattedDa
             <span className="font-medium">日期</span>
             <span className="ml-2">
               {formattedDate.map((part, index) => (
-                <span
-                  key={index}
-                  className={part.highlight ? 'text-blue-600' : ''}
-                >
+                <span key={index} className={part.highlight ? 'text-blue-600' : ''}>
                   {part.text}
                 </span>
               ))}

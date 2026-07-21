@@ -26,7 +26,7 @@ export function InvoiceTable({
   amount,
   taxType,
   chineseAmount,
-  itemName
+  itemName,
 }: InvoiceTableProps) {
   return (
     <div className="p-4">

@@ -7,30 +7,28 @@ export interface Env {
 export async function onRequest(context: any) {
   const { request } = context;
   const url = new URL(request.url);
-  
+
   // 處理圖片生成 API
   if (request.method === 'POST' && url.pathname === '/api/generate-image') {
     try {
       const data = await request.json();
       const image = await createInvoiceImage(data);
-      
+
       return new Response(image, {
         headers: {
           'Content-Type': 'image/png',
           'Cache-Control': 'public, max-age=3600',
           'Access-Control-Allow-Origin': '*',
-        }
+        },
       });
     } catch {
-      return new Response(
-        JSON.stringify({ error: 'Failed to generate image' }), {
-          status: 500,
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-          }
-        }
-      );
+      return new Response(JSON.stringify({ error: 'Failed to generate image' }), {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
     }
   }
 
@@ -41,10 +39,10 @@ export async function onRequest(context: any) {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
-      }
+      },
     });
   }
-  
+
   // 其他請求交給 Pages 處理
   return context.next();
 }

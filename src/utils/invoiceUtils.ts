@@ -2,11 +2,11 @@ export const calculateInvoiceAmounts = (
   totalAmount: string,
   subtotalAmount: string,
   amountType: 'total' | 'subtotal',
-  taxType: 'regular' | 'zero-rate' | 'exempt'
+  taxType: 'regular' | 'zero-rate' | 'exempt',
 ) => {
   if (amountType === 'total') {
     const amount = parseFloat(totalAmount) || 0;
-    const tax = taxType === 'regular' ? Math.round(amount - (amount / 1.05)) : 0;
+    const tax = taxType === 'regular' ? Math.round(amount - amount / 1.05) : 0;
     const subtotal = amount - tax;
     return { amount, tax, subtotal };
   } else {

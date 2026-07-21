@@ -11,7 +11,7 @@ export const AmountInput = React.memo(function AmountInput({
   value,
   onChange,
   placeholder,
-  autoFocus
+  autoFocus,
 }: AmountInputProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value.replace(/[^\d]/g, '');
@@ -33,9 +33,7 @@ export const AmountInput = React.memo(function AmountInput({
         onChange={handleChange}
         autoFocus={autoFocus}
       />
-      <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-        元
-      </div>
+      <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">元</div>
     </div>
   );
 });

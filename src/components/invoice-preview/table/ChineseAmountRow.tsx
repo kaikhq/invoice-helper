@@ -14,7 +14,9 @@ export function ChineseAmountRow({ chineseAmount }: ChineseAmountRowProps) {
       <td colSpan={5} className="border border-gray-300 p-2">
         <div className="flex items-center gap-2 justify-between">
           <div className="text-xs text-gray-700 shrink-0">
-            總計新台幣<br />（中文大寫）
+            總計新台幣
+            <br />
+            （中文大寫）
           </div>
           <div className="flex items-center tracking-[0.25em] text-sm">
             {chineseAmount.map(({ digit, unit, show }, index) => (

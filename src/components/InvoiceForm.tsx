@@ -17,7 +17,7 @@ export function InvoiceForm({
   setAmountType,
   taxType,
   setTaxType,
-  calculation
+  calculation,
 }: InvoiceFormProps) {
   // 從 URL 參數中檢查是否有預填資料
   const searchParams = new URLSearchParams(window.location.search);
@@ -29,7 +29,8 @@ export function InvoiceForm({
   // 2. 如果只有預填統編，focus 在金額欄位
   // 3. 如果都沒有預填，focus 在金額欄位
   const shouldFocusUniformNumber = hasPrefilledAmount && !hasPrefilledUniformNumber;
-  const shouldFocusAmount = !hasPrefilledAmount || (hasPrefilledUniformNumber && !hasPrefilledAmount);
+  const shouldFocusAmount =
+    !hasPrefilledAmount || (hasPrefilledUniformNumber && !hasPrefilledAmount);
 
   useEffect(() => {
     let isSubscribed = true;

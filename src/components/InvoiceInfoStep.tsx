@@ -21,7 +21,7 @@ interface InvoiceInfoStepProps {
 const taxTypeOptions = [
   { value: 'regular', label: '應稅 (5%)' },
   { value: 'zero-rate', label: '零稅率' },
-  { value: 'exempt', label: '免稅' }
+  { value: 'exempt', label: '免稅' },
 ];
 
 export const InvoiceInfoStep = React.memo(function InvoiceInfoStep({
@@ -33,7 +33,7 @@ export const InvoiceInfoStep = React.memo(function InvoiceInfoStep({
   setAmountType,
   taxType,
   setTaxType,
-  autoFocus
+  autoFocus,
 }: InvoiceInfoStepProps) {
   return (
     <FormStep number={1} title="發票資訊">
@@ -43,9 +43,10 @@ export const InvoiceInfoStep = React.memo(function InvoiceInfoStep({
             <button
               type="button"
               className={`relative px-4 py-2.5 border rounded-lg text-center transition-all duration-200 group
-                ${amountType === 'total'
-                  ? 'bg-blue-50 border-blue-200 text-blue-700 shadow-sm'
-                  : 'bg-white hover:bg-gray-50 hover:border-gray-300'
+                ${
+                  amountType === 'total'
+                    ? 'bg-blue-50 border-blue-200 text-blue-700 shadow-sm'
+                    : 'bg-white hover:bg-gray-50 hover:border-gray-300'
                 }`}
               onClick={() => setAmountType('total')}
             >
@@ -57,9 +58,10 @@ export const InvoiceInfoStep = React.memo(function InvoiceInfoStep({
             <button
               type="button"
               className={`relative px-4 py-2.5 border rounded-lg text-center transition-all duration-200 group
-                ${amountType === 'subtotal'
-                  ? 'bg-blue-50 border-blue-200 text-blue-700 shadow-sm'
-                  : 'bg-white hover:bg-gray-50 hover:border-gray-300'
+                ${
+                  amountType === 'subtotal'
+                    ? 'bg-blue-50 border-blue-200 text-blue-700 shadow-sm'
+                    : 'bg-white hover:bg-gray-50 hover:border-gray-300'
                 }`}
               onClick={() => setAmountType('subtotal')}
             >

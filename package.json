@@ -1,12 +1,14 @@
 {
   "name": "vite-react-typescript-starter",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite dev",
     "build": "tsc -b && vite build",
     "lint": "oxlint --deny-warnings",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "preview": "npm run build && vite preview",
     "deploy": "npm run build && wrangler deploy"
   },
@@ -25,6 +27,7 @@
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^6.0.2",
+    "oxfmt": "^0.59.0",
     "oxlint": "^1.74.0",
     "postcss": "^8.5.15",
     "tailwindcss": "^4.3.1",

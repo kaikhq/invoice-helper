@@ -13,27 +13,27 @@ export const formatChineseAmount = (amount: number): ChineseAmountDisplay[] => {
     return Array.from({ length: 9 }).map((_, i) => ({
       digit: null,
       unit: units[8 - i],
-      show: true
+      show: true,
     }));
   }
 
   const numStr = Math.floor(amount).toString().padStart(9, '0');
-  
+
   // 找到第一個非零數字的位置（從左到右）
-  const firstNonZeroIndex = numStr.split('').findIndex(char => char !== '0');
-  
+  const firstNonZeroIndex = numStr.split('').findIndex((char) => char !== '0');
+
   // 從最高位開始處理
   const result: ChineseAmountDisplay[] = [];
-  
+
   for (let i = 0; i < numStr.length; i++) {
     const num = parseInt(numStr[i]);
     const unit = units[numStr.length - 1 - i];
-    
+
     // 決定是否顯示刪除線
     // - 如果位置在第一個非零數字之前，顯示刪除線
     // - 如果位置在第一個非零數字之後，不顯示刪除線
     const shouldStrike = i < firstNonZeroIndex;
-    
+
     // 決定要顯示的數字
     let displayDigit: string | null;
     if (shouldStrike) {
@@ -50,7 +50,7 @@ export const formatChineseAmount = (amount: number): ChineseAmountDisplay[] => {
     result.push({
       digit: displayDigit,
       unit,
-      show: !shouldStrike // 只有不需要刪除線的才顯示
+      show: !shouldStrike, // 只有不需要刪除線的才顯示
     });
   }
 

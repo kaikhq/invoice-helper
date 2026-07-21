@@ -5,18 +5,18 @@ export function AdCard() {
     {
       title: '電子發票整合平台',
       description: '查詢、下載與管理電子發票',
-      url: 'https://www.einvoice.nat.gov.tw'
+      url: 'https://www.einvoice.nat.gov.tw',
     },
     {
       title: '財政部稅務入口網',
       description: '稅務資訊查詢與線上申辦服務',
-      url: 'https://www.etax.nat.gov.tw'
+      url: 'https://www.etax.nat.gov.tw',
     },
     {
       title: '營業稅專區',
       description: '營業稅相關資訊與常見問題解答',
-      url: 'https://www.ntbca.gov.tw'
-    }
+      url: 'https://www.ntbca.gov.tw',
+    },
   ];
 
   return (
@@ -39,14 +39,10 @@ export function AdCard() {
                   </h3>
                   <ExternalLink className="w-3.5 h-3.5 text-gray-300 group-hover:text-blue-500 transition-colors" />
                 </div>
-                <p className="text-xs text-gray-500">
-                  {link.description}
-                </p>
+                <p className="text-xs text-gray-500">{link.description}</p>
               </div>
             </div>
-            {index !== links.length - 1 && (
-              <div className="h-px bg-gray-50 mt-1" />
-            )}
+            {index !== links.length - 1 && <div className="h-px bg-gray-50 mt-1" />}
           </a>
         ))}
       </div>

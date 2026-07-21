@@ -18,9 +18,7 @@ export function FormStep({ number, title, children }: FormStepProps) {
       </div>
 
       {/* Step content */}
-      <div className="space-y-3">
-        {children}
-      </div>
+      <div className="space-y-3">{children}</div>
     </div>
   );
 }

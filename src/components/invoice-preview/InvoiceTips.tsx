@@ -9,7 +9,7 @@ export function InvoiceTips() {
           <h3 className="font-medium">檢查清單</h3>
         </div>
       </div>
-      
+
       <div className="p-4">
         <div className="space-y-3">
           {/* 金額檢查 */}
