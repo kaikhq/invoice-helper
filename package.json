@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "tsc && vite build",
+    "build": "tsc -b && vite build",
     "lint": "oxlint --deny-warnings",
     "preview": "npm run build && vite preview",
     "deploy": "npm run build && wrangler deploy"
@@ -28,7 +28,7 @@
     "oxlint": "^1.74.0",
     "postcss": "^8.5.15",
     "tailwindcss": "^4.3.1",
-    "typescript": "^5.5.3",
+    "typescript": "^7.0.2",
     "vite": "^8.0.16",
     "wrangler": "^4.103.0"
   }
