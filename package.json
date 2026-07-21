@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "tsc && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "oxlint --deny-warnings",
     "preview": "npm run build && vite preview",
     "deploy": "npm run build && wrangler deploy"
   },
@@ -21,19 +21,14 @@
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.42.1",
     "@cloudflare/workers-types": "^4.0.0",
-    "@eslint/js": "^9.9.1",
+    "@tailwindcss/postcss": "^4.3.1",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
-    "@tailwindcss/postcss": "^4.3.1",
     "@vitejs/plugin-react": "^6.0.2",
-    "eslint": "^9.9.1",
-    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
-    "eslint-plugin-react-refresh": "^0.4.11",
-    "globals": "^15.9.0",
+    "oxlint": "^1.74.0",
     "postcss": "^8.5.15",
     "tailwindcss": "^4.3.1",
     "typescript": "^5.5.3",
-    "typescript-eslint": "^8.61.1",
     "vite": "^8.0.16",
     "wrangler": "^4.103.0"
   }
