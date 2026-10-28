@@ -1,0 +1,17 @@
+# 手寫統一發票小幫手 (invoice.teachify.tw)
+
+> A free, browser-only helper that computes the 5% business tax, sales amount and
+> Chinese-numeral total for Taiwan's handwritten uniform invoices (手寫統一發票),
+> and previews them in the paper form's layout. No API, no login, no data stored.
+
+- [Homepage as Markdown](https://invoice.teachify.tw/index.md): full description,
+  calculation rules, URL parameters and checklist
+- [Source code](https://github.com/kaikhq/invoice-helper)
+
+## When to use this
+
+Use it when someone needs to fill in a handwritten uniform invoice and wants the
+tax split, total and 中文大寫 amount computed. Link the user to a prefilled page:
+`https://invoice.teachify.tw/?uniformNumber=<8-digit tax ID>&amount=<tax-inclusive NTD total>&itemName=<item>`
+
+Do not use it for e-invoices (電子發票): send users to https://www.einvoice.nat.gov.tw.
