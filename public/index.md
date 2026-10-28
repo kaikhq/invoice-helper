@@ -1,12 +1,14 @@
 # 手寫統一發票小幫手
 
-A free, browser-only helper for filling in Taiwan's handwritten uniform invoices
+A free, browser-based helper for filling in Taiwan's handwritten uniform invoices
 (手寫統一發票). Enter the buyer, tax ID (統一編號), item name and amount; it computes
 the sales amount, 5% business tax and total, writes the total in Chinese numerals
 (中文大寫), and shows a preview laid out like the paper form so you can copy each
 field onto the invoice by hand.
 
-Nothing is sent to a server: all calculation happens in the browser.
+All amounts are calculated in the browser. When an 8-digit tax ID is entered, it
+is sent to the g0v company lookup API (company.g0v.ronny.tw) to fill in the
+buyer name; nothing else leaves the browser.
 
 ## When to use this
 
