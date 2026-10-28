@@ -1,26 +1,31 @@
-interface CompanyApiResponse {
-  data: {
-    公司名稱: string;
-    公司所在地: string;
-    財政部?: {
-      營業人名稱: string;
-      營業地址: string;
-    };
-  };
+import { validateUBN } from '@paid-tw/ubn';
+
+// Our own 統一編號 lookup service (tw-ubn). It serves the daily FIA tax-registry
+// snapshot from the edge and falls back to the official FIA per-record API for
+// anything not yet in the snapshot, so it replaces the third-party g0v API.
+// Override per environment with VITE_UBN_API (no trailing slash).
+const UBN_API = import.meta.env.VITE_UBN_API ?? 'https://tw-ubn-lookup.kaik.workers.dev';
+
+interface VatLookupResponse {
+  found: boolean;
+  ban: string;
+  /** Registered tax name — the invoice title (抬頭). */
+  name?: string;
 }
 
 export const fetchCompanyInfo = async (uniformNumber: string): Promise<string | null> => {
-  if (!uniformNumber || uniformNumber.length !== 8) return null;
+  // Validate locally with our post-2023 checksum first — no request for a
+  // malformed 統編.
+  if (!validateUBN(uniformNumber)) return null;
 
   try {
-    const response = await fetch(`https://company.g0v.ronny.tw/api/show/${uniformNumber}`);
+    const response = await fetch(`${UBN_API}/v1/vat/${uniformNumber}`);
 
     if (!response.ok) return null;
 
-    const data = (await response.json()) as CompanyApiResponse;
+    const data = (await response.json()) as VatLookupResponse;
 
-    // 優先使用財政部的營業人名稱，如果沒有則使用公司名稱
-    return data.data?.財政部?.營業人名稱 || data.data?.公司名稱 || null;
+    return data.found && data.name ? data.name : null;
   } catch (error) {
     console.error('Error fetching company info:', error);
     return null;
