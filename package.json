@@ -13,6 +13,7 @@
     "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
+    "@paid-tw/ubn": "^0.1.1",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
     "html2canvas": "^1.4.1",
