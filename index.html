@@ -1,13 +1,90 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-Hant-TW">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>手寫統一發票小幫手</title>
+    <title>手寫統一發票小幫手：營業稅與中文大寫金額試算 | Teachify</title>
+    <meta
+      name="description"
+      content="免費的手寫統一發票開立輔助工具：輸入金額自動計算銷售額、5% 營業稅與總計，產生中文大寫金額，並以發票格式預覽。金額在瀏覽器中計算。"
+    />
+    <link rel="canonical" href="https://invoice.teachify.tw/" />
+    <link rel="alternate" type="text/markdown" href="/index.md" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://invoice.teachify.tw/" />
+    <meta property="og:title" content="手寫統一發票小幫手" />
+    <meta
+      property="og:description"
+      content="輸入金額自動計算銷售額、5% 營業稅與中文大寫總計，並以發票格式預覽。"
+    />
+    <meta property="og:locale" content="zh_TW" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebApplication",
+            "name": "手寫統一發票小幫手",
+            "url": "https://invoice.teachify.tw/",
+            "description": "Computes the sales amount, 5% business tax and Chinese-numeral total for Taiwan's handwritten uniform invoices, and previews them in the paper form's layout.",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Any",
+            "inLanguage": "zh-Hant-TW",
+            "isAccessibleForFree": true,
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TWD" },
+            "publisher": { "@id": "https://teachify.tw/#organization" }
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://teachify.tw/#organization",
+            "name": "Teachify",
+            "url": "https://teachify.tw/"
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <!-- Static content for crawlers and agents; React replaces it on mount. -->
+    <div id="root">
+      <main>
+        <h1>手寫統一發票小幫手</h1>
+        <p>
+          免費的手寫統一發票開立輔助工具。輸入買受人、統一編號、品名與金額，自動計算銷售額、5%
+          營業稅與總計，產生中文大寫金額，並以發票格式即時預覽，方便照著填寫紙本發票。金額計算都在瀏覽器中完成；輸入
+          8 位數統一編號時，會向 g0v 公司登記查詢 API 查詢並帶入買受人名稱。
+        </p>
+        <h2>計算方式</h2>
+        <ul>
+          <li>
+            應稅（5%）：由含稅總計推算時，稅額 = 四捨五入(總計 − 總計 ÷ 1.05)，銷售額 = 總計 −
+            稅額；由未稅銷售額推算時，稅額 = 四捨五入(銷售額 × 0.05)。
+          </li>
+          <li>零稅率、免稅：稅額為 0，銷售額等於總計。</li>
+        </ul>
+        <h2>網址預填</h2>
+        <p>
+          可用網址參數預先帶入欄位：<code>uniformNumber</code>（統一編號）、<code>amount</code>（含稅總計）、<code>itemName</code>（品名），例如
+          <a href="/?uniformNumber=12345678&amp;amount=1050&amp;itemName=顧問費"
+            >/?uniformNumber=12345678&amp;amount=1050&amp;itemName=顧問費</a
+          >。
+        </p>
+        <h2>開立前檢查清單</h2>
+        <ul>
+          <li>銷售額、營業稅額與總計金額三者相符，且無四捨五入誤差。</li>
+          <li>課稅別（應稅、零稅率或免稅）與交易性質相符。</li>
+          <li>統一編號與買受人名稱正確。</li>
+          <li>品名描述清楚，數量與單價計算無誤。</li>
+          <li>開立日期在當期（當月）內，避免跨期開立。</li>
+          <li>使用藍色或黑色原子筆，字跡清晰且不得塗改；有錯誤請依規定作廢重開。</li>
+        </ul>
+        <p>
+          電子發票請改用 <a href="https://www.einvoice.nat.gov.tw">財政部電子發票整合平台</a>。給 AI
+          agent 的說明：<a href="/llms.txt">llms.txt</a>。
+        </p>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
