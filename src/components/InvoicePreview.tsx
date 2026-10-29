@@ -5,7 +5,6 @@ import { CalculationSummary, InvoiceHeader, InvoiceTable } from './invoice-previ
 import { InvoiceTips } from './invoice-preview/InvoiceTips';
 import { Download } from 'lucide-react';
 import { useCallback, useRef } from 'react';
-import html2canvas from 'html2canvas';
 
 interface InvoicePreviewProps extends InvoiceData, InvoiceCalculation {
   itemName?: string;
@@ -30,6 +29,8 @@ export function InvoicePreview({
     if (!invoiceRef.current) return;
 
     try {
+      // Loaded on demand: it is large and only needed for this button.
+      const { default: html2canvas } = await import('html2canvas');
       const canvas = await html2canvas(invoiceRef.current, {
         scale: 2, // 提高解析度
         backgroundColor: '#ffffff',
