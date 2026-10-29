@@ -35,14 +35,17 @@ async function renderPage(url: URL, env: Env): Promise<Response> {
   const template = await (await env.ASSETS.fetch(new URL('/', url).toString())).text();
   const prefill = readInitialState(url.search);
   const initial = { ...prefill, buyer: await lookupBuyer(prefill.uniformNumber) };
+  // Callbacks, not replacement strings: user input such as "$`" in itemName must
+  // not be read as a substitution pattern.
   const html = template
     .replace(
       '<div id="root"></div>',
-      `<div id="root">${renderToString(createElement(App, { initial }))}</div>`,
+      () => `<div id="root">${renderToString(createElement(App, { initial }))}</div>`,
     )
     .replace(
       '</body>',
-      `<script id="${INITIAL_STATE_ID}" type="application/json">${serializeInitialState(initial)}</script></body>`,
+      () =>
+        `<script id="${INITIAL_STATE_ID}" type="application/json">${serializeInitialState(initial)}</script></body>`,
     );
   return new Response(html, {
     headers: {
