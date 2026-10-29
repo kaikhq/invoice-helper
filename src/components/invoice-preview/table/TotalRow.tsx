@@ -1,3 +1,4 @@
+import { formatNumber } from '../../../utils/numberUtils';
 interface TotalRowProps {
   amount: number;
 }
@@ -9,7 +10,7 @@ export function TotalRow({ amount }: TotalRowProps) {
         總　　計
       </td>
       <td className="border border-gray-300 p-2 text-right text-blue-600 font-mono tabular-nums">
-        {amount.toLocaleString()}
+        {formatNumber(amount)}
       </td>
     </tr>
   );

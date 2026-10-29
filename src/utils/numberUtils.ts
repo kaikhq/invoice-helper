@@ -56,3 +56,6 @@ export const formatChineseAmount = (amount: number): ChineseAmountDisplay[] => {
 
   return result;
 };
+
+// A fixed locale keeps server-rendered and hydrated markup identical.
+export const formatNumber = (value: number): string => value.toLocaleString('en-US');

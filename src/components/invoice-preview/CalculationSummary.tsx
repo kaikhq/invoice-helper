@@ -1,3 +1,4 @@
+import { formatNumber } from '../../utils/numberUtils';
 import { Plus, Equal } from 'lucide-react';
 
 interface CalculationSummaryProps {
@@ -15,7 +16,7 @@ export function CalculationSummary({ tax, subtotal, amount }: CalculationSummary
           <div className="flex-1 bg-gradient-to-br from-white to-blue-50 backdrop-blur-sm rounded-lg border border-blue-100 p-4 shadow-sm">
             <div className="text-sm text-blue-600 mb-1 font-medium">銷售額</div>
             <div className="text-2xl font-medium text-blue-700 font-mono tabular-nums tracking-tight">
-              {subtotal.toLocaleString()}
+              {formatNumber(subtotal)}
             </div>
           </div>
 
@@ -28,7 +29,7 @@ export function CalculationSummary({ tax, subtotal, amount }: CalculationSummary
           <div className="flex-1 bg-gradient-to-br from-white to-blue-50 backdrop-blur-sm rounded-lg border border-blue-100 p-4 shadow-sm">
             <div className="text-sm text-blue-600 mb-1 font-medium">營業稅額</div>
             <div className="text-2xl font-medium text-blue-700 font-mono tabular-nums tracking-tight">
-              {tax.toLocaleString()}
+              {formatNumber(tax)}
             </div>
           </div>
 
@@ -41,7 +42,7 @@ export function CalculationSummary({ tax, subtotal, amount }: CalculationSummary
           <div className="flex-1 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg border border-blue-500 p-4 shadow-md">
             <div className="text-sm text-blue-100 mb-1 font-medium">發票總計</div>
             <div className="text-2xl font-bold text-white font-mono tabular-nums tracking-tight">
-              {amount.toLocaleString()}
+              {formatNumber(amount)}
             </div>
           </div>
         </div>
@@ -50,16 +51,16 @@ export function CalculationSummary({ tax, subtotal, amount }: CalculationSummary
         <div className="md:hidden mt-4 space-y-2">
           <div className="flex items-center justify-between text-sm text-blue-600">
             <span>銷售額</span>
-            <span className="font-mono">{subtotal.toLocaleString()}</span>
+            <span className="font-mono">{formatNumber(subtotal)}</span>
           </div>
           <div className="flex items-center justify-between text-sm text-blue-600">
             <span>營業稅額</span>
-            <span className="font-mono">{tax.toLocaleString()}</span>
+            <span className="font-mono">{formatNumber(tax)}</span>
           </div>
           <div className="h-px bg-blue-200/50" />
           <div className="flex items-center justify-between text-sm font-medium text-blue-700">
             <span>發票總計</span>
-            <span className="font-mono">{amount.toLocaleString()}</span>
+            <span className="font-mono">{formatNumber(amount)}</span>
           </div>
         </div>
       </div>

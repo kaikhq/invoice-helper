@@ -1,3 +1,4 @@
+import { formatNumber } from '../../../utils/numberUtils';
 interface TaxRowsProps {
   tax: number;
   taxType: 'regular' | 'zero-rate' | 'exempt';
@@ -18,7 +19,7 @@ export function TaxRows({ tax, taxType }: TaxRowsProps) {
           </div>
         </td>
         <td className="border border-gray-300 px-2 text-right text-blue-600 font-mono tabular-nums">
-          {tax.toLocaleString()}
+          {formatNumber(tax)}
         </td>
       </tr>
       <tr>

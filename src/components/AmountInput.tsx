@@ -1,3 +1,4 @@
+import { formatNumber } from '../utils/numberUtils';
 import React from 'react';
 
 interface AmountInputProps {
@@ -18,7 +19,7 @@ export const AmountInput = React.memo(function AmountInput({
     onChange(newValue);
   };
 
-  const formattedValue = value ? parseInt(value).toLocaleString() : '';
+  const formattedValue = value ? formatNumber(parseInt(value)) : '';
 
   return (
     <div className="relative">
