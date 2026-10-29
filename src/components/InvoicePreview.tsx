@@ -10,6 +10,26 @@ interface InvoicePreviewProps extends InvoiceData, InvoiceCalculation {
   itemName?: string;
 }
 
+// html2canvas renders a clone of the page in an iframe, where each <link>
+// stylesheet is fetched again and not waited for: on a slow or revalidating
+// network the capture comes out unstyled. Copy the rules the page has already
+// loaded into the clone instead.
+function inlineStylesheets(clone: Document) {
+  for (const sheet of Array.from(document.styleSheets)) {
+    const link = sheet.ownerNode;
+    if (!(link instanceof HTMLLinkElement)) continue;
+    let rules: CSSRuleList;
+    try {
+      rules = sheet.cssRules;
+    } catch {
+      continue; // A cross-origin sheet without CORS: leave its <link> as is.
+    }
+    const style = clone.createElement('style');
+    style.textContent = Array.from(rules, (rule) => rule.cssText).join('\n');
+    clone.querySelector(`link[href="${link.getAttribute('href')}"]`)?.replaceWith(style);
+  }
+}
+
 export function InvoicePreview({
   buyer,
   uniformNumber,
@@ -36,6 +56,7 @@ export function InvoicePreview({
         backgroundColor: '#ffffff',
         logging: false,
         useCORS: true, // 允許跨域圖片
+        onclone: inlineStylesheets,
       });
 
       const link = document.createElement('a');
