@@ -30,7 +30,7 @@ Invoice Generator 是一個基於 React、TypeScript 與 Vite 的輕量級發票
 - **URL 預填功能**：可透過 URL 查詢參數（如 uniformNumber、amount、itemName）自動填入資訊，方便快速生成發票。
 - **響應式設計**：使用 Tailwind CSS 實現現代化、響應式且易於擴展的 UI 風格。
 - **部署整合**：內建 Cloudflare Pages 與 Wrangler 的設定，支持快速部署至 Cloudflare Workers 平台。
-- **截圖功能**：依賴 html2canvas，可選擇未來加入將發票預覽截圖下載或分享的功能。
+- **下載預覽**：以 html2canvas-pro 將發票預覽存成 PNG。
 
 ## 技術棧
 
@@ -39,7 +39,7 @@ Invoice Generator 是一個基於 React、TypeScript 與 Vite 的輕量級發票
 - [Vite](https://vitejs.dev/) · 極速開發與構建工具
 - [Tailwind CSS](https://tailwindcss.com/) · 高效的 CSS 寫法
 - [Cloudflare Pages](https://pages.cloudflare.com/) & [Wrangler](https://developers.cloudflare.com/workers/wrangler/) · 部署與運行無服務器應用
-- 其他依賴：date-fns、date-fns-tz、html2canvas 以及 lucide-react
+- 其他依賴：date-fns、date-fns-tz、html2canvas-pro 以及 lucide-react
 
 ## 快速開始
 
