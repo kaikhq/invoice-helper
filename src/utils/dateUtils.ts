@@ -41,6 +41,13 @@ export const getTaiwanDate = (): string => {
   return format(taiwanDate, 'yyyy-MM-dd');
 };
 
+// Taiwan is UTC+8 all year (no daylight saving).
+const TAIWAN_OFFSET_MS = 8 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+export const msUntilTaiwanMidnight = (now = Date.now()): number =>
+  DAY_MS - ((now + TAIWAN_OFFSET_MS) % DAY_MS);
+
 export const formatTaiwanDate = (dateStr: string): FormattedDatePart[] => {
   if (!dateStr) return [];
 

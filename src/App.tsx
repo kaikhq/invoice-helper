@@ -9,6 +9,7 @@ import { AdCard } from './components/layout/AdCard';
 import { AboutSection } from './components/layout/AboutSection';
 import { MobileCalculationSummary } from './components/mobile/MobileCalculationSummary';
 import { InitialState } from './types/invoice';
+import { getTaiwanDate, msUntilTaiwanMidnight } from './utils/dateUtils';
 
 // Rendered on the server and hydrated on the client, so the first render must
 // depend on `initial` alone: no window, no clock, no locale.
@@ -20,6 +21,28 @@ export default function App({ initial }: { initial: InitialState }) {
   const [amountType, setAmountType] = useState<'total' | 'subtotal'>('total');
   const [taxType, setTaxType] = useState<'regular' | 'zero-rate' | 'exempt'>('regular');
   const [itemName] = useState(initial.itemName);
+  const [today, setToday] = useState(initial.today);
+
+  // Hydrate with the server's date, then keep it current if the tab stays open
+  // past Taipei midnight (timers are throttled in background tabs, hence
+  // visibilitychange too).
+  useEffect(() => {
+    const refresh = () => setToday(getTaiwanDate());
+    let timer: ReturnType<typeof setTimeout>;
+    const schedule = () => {
+      timer = setTimeout(() => {
+        refresh();
+        schedule();
+      }, msUntilTaiwanMidnight() + 1000);
+    };
+    refresh();
+    schedule();
+    document.addEventListener('visibilitychange', refresh);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('visibilitychange', refresh);
+    };
+  }, []);
 
   // 決定 autoFocus：沒有預填金額時 focus 金額；只預填金額時 focus 統編
   const autoFocusField = !initial.amount
@@ -89,7 +112,7 @@ export default function App({ initial }: { initial: InitialState }) {
               <InvoicePreview
                 buyer={buyer}
                 uniformNumber={uniformNumber}
-                date={initial.today}
+                date={today}
                 totalAmount={totalAmount}
                 subtotalAmount={subtotalAmount}
                 amountType={amountType}
