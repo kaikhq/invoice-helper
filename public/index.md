@@ -6,9 +6,10 @@ the sales amount, 5% business tax and total, writes the total in Chinese numeral
 (中文大寫), and shows a preview laid out like the paper form so you can copy each
 field onto the invoice by hand.
 
-All amounts are calculated in the browser. When an 8-digit tax ID is entered, it
-is sent to the g0v company lookup API (company.g0v.ronny.tw) to fill in the
-buyer name; nothing else leaves the browser.
+All amounts are calculated in the browser. When a valid 8-digit tax ID is
+entered, it is sent to Teachify's tax-ID lookup service
+(tw-ubn-lookup.kaik.workers.dev) to fill in the buyer name; nothing else leaves
+the browser.
 
 ## When to use this
 

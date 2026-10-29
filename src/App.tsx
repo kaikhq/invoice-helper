@@ -1,46 +1,81 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { InvoiceForm } from './components/InvoiceForm';
 import { InvoicePreview } from './components/InvoicePreview';
 import { calculateInvoiceAmounts } from './utils/invoiceUtils';
+import { fetchCompanyInfo } from './utils/companyUtils';
 import { FormCard } from './components/layout/FormCard';
 import { PreviewCard } from './components/layout/PreviewCard';
 import { AdCard } from './components/layout/AdCard';
+import { AboutSection } from './components/layout/AboutSection';
 import { MobileCalculationSummary } from './components/mobile/MobileCalculationSummary';
-import { getTaiwanDate } from './utils/dateUtils';
+import { InitialState } from './types/invoice';
+import { getTaiwanDate, msUntilTaiwanMidnight } from './utils/dateUtils';
 
-export default function App() {
-  const [buyer, setBuyer] = useState('');
-  const [uniformNumber, setUniformNumber] = useState('');
-  const [totalAmount, setTotalAmount] = useState('');
+// Rendered on the server and hydrated on the client, so the first render must
+// depend on `initial` alone: no window, no clock, no locale.
+export default function App({ initial }: { initial: InitialState }) {
+  const [buyer, setBuyer] = useState(initial.buyer);
+  const [uniformNumber, setUniformNumber] = useState(initial.uniformNumber);
+  const [totalAmount, setTotalAmount] = useState(initial.amount);
   const [subtotalAmount, setSubtotalAmount] = useState('');
   const [amountType, setAmountType] = useState<'total' | 'subtotal'>('total');
   const [taxType, setTaxType] = useState<'regular' | 'zero-rate' | 'exempt'>('regular');
-  const [itemName, setItemName] = useState('');
+  const [itemName] = useState(initial.itemName);
+  const [today, setToday] = useState(initial.today);
 
+  // Hydrate with the server's date, then keep it current if the tab stays open
+  // past Taipei midnight (timers are throttled in background tabs, hence
+  // visibilitychange too).
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const prefilledUniformNumber = params.get('uniformNumber');
-    const prefilledAmount = params.get('amount');
-    const prefilledItemName = params.get('itemName');
-
-    if (prefilledUniformNumber) {
-      setUniformNumber(prefilledUniformNumber);
-    }
-
-    if (prefilledAmount) {
-      setTotalAmount(prefilledAmount);
-      setAmountType('total');
-    }
-
-    if (prefilledItemName) {
-      setItemName(prefilledItemName);
-    }
+    const refresh = () => setToday(getTaiwanDate());
+    let timer: ReturnType<typeof setTimeout>;
+    const schedule = () => {
+      timer = setTimeout(() => {
+        refresh();
+        schedule();
+      }, msUntilTaiwanMidnight() + 1000);
+    };
+    refresh();
+    schedule();
+    document.addEventListener('visibilitychange', refresh);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('visibilitychange', refresh);
+    };
   }, []);
 
-  const calculation = calculateInvoiceAmounts(totalAmount, subtotalAmount, amountType, taxType);
+  // 決定 autoFocus：沒有預填金額時 focus 金額；只預填金額時 focus 統編
+  const autoFocusField = !initial.amount
+    ? 'amount'
+    : !initial.uniformNumber
+      ? 'uniformNumber'
+      : null;
 
-  // 取得台灣時間的今天日期
-  const today = getTaiwanDate();
+  // The server already looked up a prefilled 統編; don't fetch it again.
+  const lookedUp = useRef(initial.buyer ? initial.uniformNumber : '');
+
+  useEffect(() => {
+    if (uniformNumber.length !== 8) {
+      // Clearing the ID unlocks the buyer field; re-entering it must look it up again.
+      lookedUp.current = '';
+      return;
+    }
+    if (uniformNumber === lookedUp.current) return;
+
+    let isSubscribed = true;
+    fetchCompanyInfo(uniformNumber).then((companyName) => {
+      if (isSubscribed && companyName) {
+        lookedUp.current = uniformNumber;
+        setBuyer(companyName);
+      }
+    });
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, [uniformNumber]);
+
+  const calculation = calculateInvoiceAmounts(totalAmount, subtotalAmount, amountType, taxType);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
@@ -63,6 +98,7 @@ export default function App() {
                 taxType={taxType}
                 setTaxType={setTaxType}
                 calculation={calculation}
+                autoFocusField={autoFocusField}
               />
             </FormCard>
 
@@ -87,6 +123,8 @@ export default function App() {
             </PreviewCard>
           </div>
         </div>
+
+        <AboutSection />
       </div>
 
       <MobileCalculationSummary {...calculation} />

@@ -1,3 +1,4 @@
+import { formatNumber } from '../../utils/numberUtils';
 import { InvoiceCalculation } from '../../types/invoice';
 
 export function MobileCalculationSummary({ tax, subtotal, amount }: InvoiceCalculation) {
@@ -8,19 +9,19 @@ export function MobileCalculationSummary({ tax, subtotal, amount }: InvoiceCalcu
           <div>
             <div className="text-sm text-gray-500">營業稅額</div>
             <div className="text-lg font-medium text-blue-700 font-mono tabular-nums">
-              {tax.toLocaleString()}
+              {formatNumber(tax)}
             </div>
           </div>
           <div>
             <div className="text-sm text-gray-500">銷售額</div>
             <div className="text-lg font-medium text-blue-700 font-mono tabular-nums">
-              {subtotal.toLocaleString()}
+              {formatNumber(subtotal)}
             </div>
           </div>
           <div>
             <div className="text-sm text-gray-500">發票總計</div>
             <div className="text-lg font-bold text-blue-900 font-mono tabular-nums">
-              {amount.toLocaleString()}
+              {formatNumber(amount)}
             </div>
           </div>
         </div>

@@ -1,3 +1,4 @@
+import { formatNumber } from '../../../utils/numberUtils';
 interface ItemRowsProps {
   subtotal: number;
   itemName?: string;
@@ -14,10 +15,10 @@ export function ItemRows({ subtotal, itemName }: ItemRowsProps) {
           1
         </td>
         <td className="border border-gray-300 p-2 text-right text-blue-600 font-mono tabular-nums">
-          {subtotal.toLocaleString()}
+          {formatNumber(subtotal)}
         </td>
         <td className="border border-gray-300 p-2 text-right text-blue-600 font-mono tabular-nums">
-          {subtotal.toLocaleString()}
+          {formatNumber(subtotal)}
         </td>
         <td className="border border-gray-300 p-2"></td>
       </tr>

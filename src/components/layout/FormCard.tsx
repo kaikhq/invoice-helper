@@ -18,7 +18,7 @@ export function FormCard({ children }: FormCardProps) {
             <FileText className="w-4 h-4 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-blue-900">統一發票開立小幫手</h1>
+            <h1 className="text-lg font-bold text-blue-900">手寫統一發票小幫手</h1>
             <p className="text-sm text-blue-600/80 mt-0.5">
               輕鬆計算正確稅額，再也不必擔心寫錯發票
             </p>
