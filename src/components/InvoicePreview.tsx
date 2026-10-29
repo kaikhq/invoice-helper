@@ -30,7 +30,7 @@ export function InvoicePreview({
 
     try {
       // Loaded on demand: it is large and only needed for this button.
-      const { default: html2canvas } = await import('html2canvas');
+      const { default: html2canvas } = await import('html2canvas-pro');
       const canvas = await html2canvas(invoiceRef.current, {
         scale: 2, // 提高解析度
         backgroundColor: '#ffffff',
