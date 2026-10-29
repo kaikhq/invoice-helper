@@ -32,7 +32,12 @@ export default function App({ initial }: { initial: InitialState }) {
   const lookedUp = useRef(initial.buyer ? initial.uniformNumber : '');
 
   useEffect(() => {
-    if (uniformNumber.length !== 8 || uniformNumber === lookedUp.current) return;
+    if (uniformNumber.length !== 8) {
+      // Clearing the ID unlocks the buyer field; re-entering it must look it up again.
+      lookedUp.current = '';
+      return;
+    }
+    if (uniformNumber === lookedUp.current) return;
 
     let isSubscribed = true;
     fetchCompanyInfo(uniformNumber).then((companyName) => {
