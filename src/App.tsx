@@ -1,46 +1,53 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { InvoiceForm } from './components/InvoiceForm';
 import { InvoicePreview } from './components/InvoicePreview';
 import { calculateInvoiceAmounts } from './utils/invoiceUtils';
+import { fetchCompanyInfo } from './utils/companyUtils';
 import { FormCard } from './components/layout/FormCard';
 import { PreviewCard } from './components/layout/PreviewCard';
 import { AdCard } from './components/layout/AdCard';
+import { AboutSection } from './components/layout/AboutSection';
 import { MobileCalculationSummary } from './components/mobile/MobileCalculationSummary';
-import { getTaiwanDate } from './utils/dateUtils';
+import { InitialState } from './types/invoice';
 
-export default function App() {
-  const [buyer, setBuyer] = useState('');
-  const [uniformNumber, setUniformNumber] = useState('');
-  const [totalAmount, setTotalAmount] = useState('');
+// Rendered on the server and hydrated on the client, so the first render must
+// depend on `initial` alone: no window, no clock, no locale.
+export default function App({ initial }: { initial: InitialState }) {
+  const [buyer, setBuyer] = useState(initial.buyer);
+  const [uniformNumber, setUniformNumber] = useState(initial.uniformNumber);
+  const [totalAmount, setTotalAmount] = useState(initial.amount);
   const [subtotalAmount, setSubtotalAmount] = useState('');
   const [amountType, setAmountType] = useState<'total' | 'subtotal'>('total');
   const [taxType, setTaxType] = useState<'regular' | 'zero-rate' | 'exempt'>('regular');
-  const [itemName, setItemName] = useState('');
+  const [itemName] = useState(initial.itemName);
+
+  // 決定 autoFocus：沒有預填金額時 focus 金額；只預填金額時 focus 統編
+  const autoFocusField = !initial.amount
+    ? 'amount'
+    : !initial.uniformNumber
+      ? 'uniformNumber'
+      : null;
+
+  // The server already looked up a prefilled 統編; don't fetch it again.
+  const lookedUp = useRef(initial.buyer ? initial.uniformNumber : '');
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const prefilledUniformNumber = params.get('uniformNumber');
-    const prefilledAmount = params.get('amount');
-    const prefilledItemName = params.get('itemName');
+    if (uniformNumber.length !== 8 || uniformNumber === lookedUp.current) return;
 
-    if (prefilledUniformNumber) {
-      setUniformNumber(prefilledUniformNumber);
-    }
+    let isSubscribed = true;
+    fetchCompanyInfo(uniformNumber).then((companyName) => {
+      if (isSubscribed && companyName) {
+        lookedUp.current = uniformNumber;
+        setBuyer(companyName);
+      }
+    });
 
-    if (prefilledAmount) {
-      setTotalAmount(prefilledAmount);
-      setAmountType('total');
-    }
-
-    if (prefilledItemName) {
-      setItemName(prefilledItemName);
-    }
-  }, []);
+    return () => {
+      isSubscribed = false;
+    };
+  }, [uniformNumber]);
 
   const calculation = calculateInvoiceAmounts(totalAmount, subtotalAmount, amountType, taxType);
-
-  // 取得台灣時間的今天日期
-  const today = getTaiwanDate();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
@@ -63,6 +70,7 @@ export default function App() {
                 taxType={taxType}
                 setTaxType={setTaxType}
                 calculation={calculation}
+                autoFocusField={autoFocusField}
               />
             </FormCard>
 
@@ -76,7 +84,7 @@ export default function App() {
               <InvoicePreview
                 buyer={buyer}
                 uniformNumber={uniformNumber}
-                date={today}
+                date={initial.today}
                 totalAmount={totalAmount}
                 subtotalAmount={subtotalAmount}
                 amountType={amountType}
@@ -87,6 +95,8 @@ export default function App() {
             </PreviewCard>
           </div>
         </div>
+
+        <AboutSection />
       </div>
 
       <MobileCalculationSummary {...calculation} />

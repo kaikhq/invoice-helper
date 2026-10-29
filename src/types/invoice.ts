@@ -22,4 +22,16 @@ export interface InvoiceFormProps extends Omit<InvoiceData, 'date'> {
   setAmountType: (value: 'total' | 'subtotal') => void;
   setTaxType: (value: 'regular' | 'zero-rate' | 'exempt') => void;
   calculation: InvoiceCalculation;
+  autoFocusField: 'amount' | 'uniformNumber' | null;
+}
+
+/** Everything the first render depends on, computed once by the server. */
+export interface InitialState {
+  /** Today in Asia/Taipei, yyyy-MM-dd. */
+  today: string;
+  uniformNumber: string;
+  amount: string;
+  itemName: string;
+  /** Company name for a prefilled uniformNumber, if the server found one. */
+  buyer: string;
 }
